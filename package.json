@@ -1,0 +1,44 @@
+{
+  "name": "webgl-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "prettier": "prettier --write",
+    "build": "vite build",
+    "server": "node app.router.js",
+    "vite": "vite --open",
+    "dev": "npm-run-all -p server vite"
+  },
+  "lint-staged": {
+    "*.(ts|less|js|md)": "prettier --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fongzhizhi/webgl-tutorial.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fongzhizhi/webgl-tutorial/issues"
+  },
+  "homepage": "https://github.com/fongzhizhi/webgl-tutorial#readme",
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/marked": "^4.0.1",
+    "axios": "^0.21.4",
+    "express": "^4.17.2",
+    "husky": "^7.0.4",
+    "less": "^4.1.2",
+    "lint-staged": "^12.4.1",
+    "marked": "^4.0.5",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.2",
+    "vite": "^2.7.7"
+  }
+}
