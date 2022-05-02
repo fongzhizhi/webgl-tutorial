@@ -23,7 +23,7 @@ function loadReadme() {
 }
 
 /**
- * print something
+ * sprint something
  */
 function doSomething() {
   printStyleLog(
