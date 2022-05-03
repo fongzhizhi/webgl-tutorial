@@ -7,14 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "prettier": "prettier --write",
+    "prettier": "prettier **/* --write",
     "build": "vite build",
     "server": "node app.router.js",
     "vite": "vite --open",
     "dev": "npm-run-all -p server vite"
   },
   "lint-staged": {
-    "*.(ts|less|js|md)": "prettier --write"
+    "*.(ts|less|js|md|json)": "prettier --write"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,8 @@
     "@types/marked": "^4.0.1",
     "axios": "^0.21.4",
     "express": "^4.17.2",
+    "github-markdown-css": "^5.1.0",
+    "highlight.js": "^11.5.1",
     "husky": "^7.0.4",
     "less": "^4.1.2",
     "lint-staged": "^12.4.1",
