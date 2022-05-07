@@ -41,7 +41,7 @@ export function exampleEventInit() {
 export function exampleBackBtnEventInit() {
   $$(keyBackBtnSelector).addEventListener("click", (e) => {
     const key = (e.target as Element).getAttribute("key");
-    const keyEle = key && $$(`[key="${key}"].example`);
+    const keyEle = key ? $$(`[key="${key}"].example`) : $$("#logo");
     keyEle &&
       keyEle.scrollIntoView({
         behavior: "smooth",

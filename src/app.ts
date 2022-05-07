@@ -6,7 +6,6 @@ import { marked } from "marked";
 import hljs from "highlight.js";
 import { printStyleLog } from "./utils/util";
 import axios from "axios";
-import { getWebGLContext } from "./examples/1.webglContext";
 import { $$ } from "./utils/xml";
 import { exampleBackBtnEventInit, exampleEventInit } from "./app/event";
 
