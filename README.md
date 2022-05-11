@@ -10,9 +10,9 @@
 
 ## WebGL 基础
 
-### 获取 WebGL 上下文环境
+### WebGL 上下文
 
-[canvas](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/canvas) 是浏览器绘制图形的画布，在绘制之前我们首先都需要通过[getContext](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/getContext)函数获取**渲染上下文**，不同的上下文为画布绘图提供了不同的 API，目前支持的渲染上下文有：
+[canvas](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/canvas) 是浏览器绘制图形的画布，在绘制之前我们首先都需要通过 [getContext](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement/getContext) 函数获取**渲染上下文**，不同的上下文为画布绘图提供了不同的 API，目前支持的渲染上下文有：
 
 - **2d**：建立一个 [`CanvasRenderingContext2D`](https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D) 二维渲染上下文。
 - **webgl**：或 experimental-webgl，将创建一个 [`WebGLRenderingContext`](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext) 三维渲染上下文对象。只在实现[WebGL](https://developer.mozilla.org/en-US/docs/Web/WebGL) 版本 1(OpenGL ES 2.0)的浏览器上可用。
@@ -46,100 +46,106 @@ export function getWebGLContext() {
 
 当我们获取了渲染上下文后，就能使用上下文的 API 来绘图了，最简单的就是绘制一些简单的 2D 内容，如线条，矩形等等。
 
-#### 渲染场景
+需要明确的是，虽然我们绘制的是 2D 平面物体，但我们仍然把它绘制再三维空间中，因此，我们需要创建**着色器**来帮助我们在上下文中渲染物体。本章接将从一些基础概念讲起，最后在画布上绘制出一个简单的正方形。
 
-需要明确的是，虽然我们绘制的是 2D 平面物体，但我们任然把它绘制再三维空间中，因此，我们依然需要创建**着色器**来帮助我们在上下文中渲染物体。下面是绘制一个正方形的简单例子。
+重要概念清单：[着色器](#着色器（Shader）)、[着色器程序](#着色器程序（Shader Program）)、[矩阵](#矩阵)。
 
-##### 着色器(Shader)
+#### 着色器（Shader）
 
 着色器是使用 [OpenGL ES 着色语言](https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf) 编写的程序，它携带着绘制形状的**顶点信息**以及构造在屏幕像素上的所需数据，换句话说，着色器就是记录着像素点**位置**和**颜色数据**的程序。想象一下，有了颜色和颜色具体的绘制位置，是不是就可以在显示屏上绘制出想要的带色彩图形了。
 
 根据上面的描述，着色器有两个关键信息：像素点的位置和该位置的颜色信息。对应地，在 WebGL 中就划分为两种着色器：**顶点着色器**和**片段着色器**。简单来说，顶点着色器就是负责记录像素点位置，而片段着色器负责记录颜色数据，两者合并请来就是完整的**着色器程序**，就能通过着色器程序绘制像素图案。
 
-- 顶点着色器（Vertex Shader），在 WebGL 中，属于 [WebGLShader]([WebGLShader - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLShader)) 接口，用于记录像素**位置**信息。
+##### 顶点着色器（Vertex Shader）
 
-  每次渲染一个形状时，顶点着色器会在形状中的每个顶点运行。它的工作是将输入顶点从原始坐标系转换到 WebGL 使用的缩放空间(clipspace)坐标系（每个坐标轴的坐标范围都是[-1, 1]，且不考虑纵横比，实际尺寸和任何其他因素）。WebGL 缩放坐标系简单理解就是**单位坐标系**，不管实际尺寸多大多小的物体都进行缩放后变成单位坐标系的大小。
+> 在 WebGL 中，属于 [WebGLShader]([WebGLShader - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLShader)) 接口，用于记录像素**位置**信息。
 
-  顶点着色器需要对顶点坐标进行必要的转换，在每个顶点基础上进行其他调整或计算，然后通过将其保存在由 GLSL 提供的特殊变量（我们称为**gl_Position**）中来返回变换后的顶点。
+每次渲染一个形状时，顶点着色器会在形状中的每个顶点运行。它的工作是将输入顶点从原始坐标系转换到 WebGL 使用的缩放空间(clipspace)坐标系（每个坐标轴的坐标范围都是[-1, 1]，且不考虑纵横比，实际尺寸和任何其他因素）。WebGL 缩放坐标系简单理解就是**单位坐标系**，不管实际尺寸多大多小的物体都进行缩放后变成单位坐标系的大小。
 
-  以下的顶点着色器接收一个我们定义的属性（**aVertexPosition**）的顶点位置值。之后这个值与两个 4x4 的矩阵（**uProjectionMatrix**和**uModelMatrix**）相乘; 乘积赋值给 **gl_Position**。有关投影和其他矩阵的更多信息，[在这里您可能可以找到有帮助的文章](https://webglfundamentals.org/webgl/lessons/webgl-3d-perspective.html).。
+顶点着色器需要对顶点坐标进行必要的转换，在每个顶点基础上进行其他调整或计算，然后通过将其保存在由 GLSL 提供的特殊变量（我们称为**gl_Position**）中来返回变换后的顶点。
 
-  ```ts
-  // 顶点着色器程序(GLSL源码)
-  const vsSource = `
-      attribute vec4 aVertexPosition;
-  
-      uniform mat4 uModelViewMatrix;
-      uniform mat4 uProjectionMatrix;
-  
-      void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      }
-   `;
-  ```
+以下的顶点着色器接收一个我们定义的属性（**aVertexPosition**）的顶点位置值。之后这个值与两个 4x4 的矩阵（**uProjectionMatrix**和**uModelMatrix**）相乘; 乘积赋值给 **gl_Position**。有关投影和其他矩阵的更多信息，[在这里您可能可以找到有帮助的文章](https://webglfundamentals.org/webgl/lessons/webgl-3d-perspective.html).。
 
-  > 在这个顶点着色器程序中，没有加入光照效果和纹理效果，这些内容将在之后的章节补充。
+```ts
+// 顶点着色器程序(GLSL源码)
+const vsSource = `
+    attribute vec4 aVertexPosition;
 
-- 片段着色器（Fragment Shader），在 WebGL 中，属于 [WebGLShader]([WebGLShader - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLShader)) 接口，用于记录像素**颜色**信息。
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
 
-  片段着色器在顶点着色器处理完图形顶点后，会被要绘制每个图形的每个像素点调用一次。它的职责是确定调用像素点的颜色，通过指定应用到像素的纹理元素（也就是图形纹理中的像素），获取纹理元素的颜色，然后再应用光照效果，就得到了适合的颜色，该值会存储到变量**gl_FragColor**中，然后 WebGL 就能在显示器上显示该像素点的颜色，绘制出实际图形。
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    }
+ `;
+```
 
-  ```ts
-  const fsSource = `
-      void main() {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-      }
-  `;
-  ```
+> 在这个顶点着色器程序中，没有加入光照效果和纹理效果，这些内容将在之后的章节补充
 
-- 着色器的创建和使用
+##### 片段着色器（Fragment Shader）
 
-  通过 [gl.createShader](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/createShader) 来创建着色器，然后通过 [gl.shaderSource()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/shaderSource) 设置 GLSL 程序代码，最后调用 [gl.compileShader()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/compileShader) 完成做色器的编译工作，但是，着色器不**能直接被 webgl 使用**，我们需要同时挂载两个着色器（顶点着色器和片段着色器）到 WebGL 程序上，然后通过程序的使用来体现着色器的功能。
+> 在 WebGL 中，属于 [WebGLShader]([WebGLShader - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLShader)) 接口，用于记录像素**颜色**信息。
 
-- 着色器程序（Shader Program），在 WebGL 中，称为 [WebGLProgram]([WebGLProgram - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLProgram))，由**一个**顶点着色器和**一个**片段着色器组成。
+片段着色器在顶点着色器处理完图形顶点后，会被要绘制每个图形的每个像素点调用一次。它的职责是确定调用像素点的颜色，通过指定应用到像素的纹理元素（也就是图形纹理中的像素），获取纹理元素的颜色，然后再应用光照效果，就得到了适合的颜色，该值会存储到变量**gl_FragColor**中，然后 WebGL 就能在显示器上显示该像素点的颜色，绘制出实际图形。
 
-  创建一个 WebGL 程序需要调用 [gl.createProgram()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/createProgram) 方法，然后调用 [gl.attachShader()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/attachShader) 方法绑定着色器，这样，这个程序才能被 WebGL 绘图上下文使用。
+```ts
+const fsSource = `
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+`;
+```
 
-  以下是一个 WebGL 程序能正常使用的执行步骤：创建、绑定着色器、链接到上下文中：
+##### 着色器的创建和使用
 
-  ```ts
-  // 创建WebGL程序
-  const program = gl.createProgram();
+通过 [gl.createShader](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/createShader) 来创建着色器，然后通过 [gl.shaderSource()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/shaderSource) 设置 GLSL 程序代码，最后调用 [gl.compileShader()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/compileShader) 完成做色器的编译工作，但是，着色器不**能直接被 webgl 使用**，我们需要同时挂载两个着色器（顶点着色器和片段着色器）到 WebGL 程序上，然后通过程序的使用来体现着色器的功能。
 
-  // 添加预先定义好的着色器
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
+#### 着色器程序（Shader Program）
 
-  // 链接给定的程序，从而完成该程序的顶点着色器和片段着色器准备GPU代码的过程
-  gl.linkProgram(program);
+> 在 WebGL 中，称为 [WebGLProgram]([WebGLProgram - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLProgram))，由**一个**顶点着色器和**一个**片段着色器组成。
 
-  // 判断程序是否可用
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    var info = gl.getProgramInfoLog(program);
-    throw "WebGL program 不能编译. \n\n" + info;
-  }
-  ```
+创建一个 WebGL 程序需要调用 [gl.createProgram()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/createProgram) 方法，然后调用 [gl.attachShader()](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/attachShader) 方法绑定着色器，这样，这个程序才能被 WebGL 绘图上下文使用。
 
-  当 WebGL 程序能正常使用之后，我们就可以使用该程序，绑定合适的数据缓冲，配置相关属性参数，然后就能将图形绘制到画布上：
+以下是一个 WebGL 程序能正常使用的执行步骤：创建、绑定着色器、链接到上下文中：
 
-  ```ts
-  // 当定义好的程序添加到当前上下文的渲染状态中
-  gl.useProgram(program);
+```ts
+// 创建WebGL程序
+const program = gl.createProgram();
 
-  // 绑定数据缓冲
-  gl.bindBUffer(gl.ARRAY_BUFFER, buffer);
-  // 激活属性
-  gl.enableVertexAttribArray(attributeLocation);
-  // 读取当前绑定缓冲数据的顶点数据
-  gl.vertexAttribPointer(attributeLocation, 3, gl.FLOAT, false, 0, 0);
+// 添加预先定义好的着色器
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
 
-  // 从向量数据中绘制图形
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
-  ```
+// 链接给定的程序，从而完成该程序的顶点着色器和片段着色器准备GPU代码的过程
+gl.linkProgram(program);
 
-  > 缓冲（Buffer）：表示一个不透明的缓冲区对象，储存诸如顶点或着色之类的数据。，参见：[WebGLBuffer - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLBuffer)
-  >
-  > 属性（Attributes）：**Attributes** 可以被 JavaScript 代码操作，也可以在 vertex shader 中被作为变量访问。Attributes 通常被用于存储颜色、纹理坐标以及其他需要在 JavaScript 代码和 vertex shader 之间互相传递的数据。参见：[Data in WebGL - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Data#attributes)
+// 判断程序是否可用
+if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+  var info = gl.getProgramInfoLog(program);
+  throw "WebGL program 不能编译. \n\n" + info;
+}
+```
+
+当 WebGL 程序能正常使用之后，我们就可以使用该程序，绑定合适的数据缓冲，配置相关属性参数，然后就能将图形绘制到画布上：
+
+```ts
+// 当定义好的程序添加到当前上下文的渲染状态中
+gl.useProgram(program);
+
+// 绑定数据缓冲
+gl.bindBUffer(gl.ARRAY_BUFFER, buffer);
+// 激活属性
+gl.enableVertexAttribArray(attributeLocation);
+// 读取当前绑定缓冲数据的顶点数据
+gl.vertexAttribPointer(attributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+// 从向量数据中绘制图形
+gl.drawArrays(gl.TRIANGLES, 0, 3);
+```
+
+> 缓冲（Buffer）：表示一个不透明的缓冲区对象，储存诸如顶点或着色之类的数据。，参见：[WebGLBuffer - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLBuffer)
+>
+> 属性（Attributes）：**Attributes** 可以被 JavaScript 代码操作，也可以在 vertex shader 中被作为变量访问。Attributes 通常被用于存储颜色、纹理坐标以及其他需要在 JavaScript 代码和 vertex shader 之间互相传递的数据。参见：[Data in WebGL - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Data#attributes)
 
 **总结**来说，我们需要在显示器上显示图像，就需要知道描绘图像的像素点和以及像素点上的颜色：存储像素点和像素点颜色的对象我们称为**着色器（Shader）**，所以，显示器绘图的本质就是**通过着色器来绘制一个个像素点**。
 
@@ -150,11 +156,108 @@ export function getWebGLContext() {
 - 初始化着色器：创建着色器、绑定 GLSL 源码
 - 初始化 WebGL 程序：创建程序、添加着色器、链接到绘图上下文
 - 使用程序：添加程序到渲染状态中、绑定缓冲数据、激活相关属性、读取缓冲数据
-- 绘制图形
+
+#### 封装工具类
+
+为了更方便地使用 WebGL API，我们封装一个通用的工具函数类：
+
+```ts
+/**
+ * WebGL渲染器
+ * @description WebGL绘图上下文相关API的封装
+ */
+export class WebGLRender {
+  /**画布容器 */
+  readonly canvas: HTMLCanvasElement;
+  /**上下文属性 */
+  readonly gl_attributes: WebGLContextAttributes;
+  /**上下文 */
+  readonly gl: WebGLRenderingContext;
+
+  constructor(
+    canvas: HTMLCanvasElement,
+    gl_attributes: WebGLContextAttributes
+  ) {
+    this.canvas = canvas;
+    this.gl_attributes = gl_attributes;
+    this.gl = canvas.getContext("webgl", gl_attributes);
+  }
+
+  /**
+   * 创建着色器
+   * @param type 着色器类型
+   * @param source 着色器FGSL程序源码
+   */
+  createShader(type: WebGLShaderType, source: string) {
+    const gl = this.gl;
+    // 创建着色器
+    const shader = gl.createShader(gl[type]);
+    if (!shader) {
+      throw new Error("invalid shader type: " + type);
+    }
+    // 挂在源码并编译
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    // 检测是否编译成功
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const info = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw new Error("An error occurred compiling the shaders: " + info);
+    }
+
+    return shader;
+  }
+
+  /**
+   * 创建着色器程序
+   * @param vs 顶点着色器
+   * @param fs 片段着色器
+   */
+  createProgram(vs: WebGLShader, fs: WebGLShader) {
+    const gl = this.gl;
+
+    // 创建WebGL程序
+    const program = gl.createProgram();
+
+    // 添加预先定义好的着色器
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+
+    // 链接程序，从而完成该程序的顶点着色器和片段着色器准备GPU代码的过程
+    gl.linkProgram(program);
+
+    // 判断程序是否可用
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      const info = gl.getProgramInfoLog(program);
+      throw "WebGL program compile failed! \n\n" + info;
+    }
+
+    return program;
+  }
+
+  /**
+   * 创建着色器程序
+   * @param vs_source 顶点着色器源码
+   * @param fs_source 片段着色器源码
+   */
+  createProgramBySource(vs_source: string, fs_source: string) {
+    const vs = this.createShader(WebGLShaderType.VERTEX_SHADER, vs_source);
+    const fs = this.createShader(WebGLShaderType.FRAGMENT_SHADER, fs_source);
+    return this.createProgram(vs, fs);
+  }
+}
+```
+
+#### 着色器程序的三种变量：`attribue`、`uniform`和`varying`
+
+https://blog.csdn.net/u014291990/article/details/103113179
 
 #### 创建对象
 
-#### 矩阵通用计算
+#### 矩阵
+
+#### 绘制案例：绘制一个正方形
 
 ### 使用着色器(shader)赋予颜色
 
