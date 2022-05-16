@@ -1,4 +1,9 @@
-import { WebGLShaderType } from "./Constants";
+import {
+  BufferOption,
+  VertexAttrOption,
+  WebGLBufferUsage,
+  WebGLShaderType,
+} from "./Constants";
 
 /**
  * WebGL渲染器
@@ -96,5 +101,48 @@ export class WebGLRender {
       throw new Error(`Location of attribute ${name} failed to obtain`);
     }
     return loc;
+  }
+
+  /**
+   * 创建缓冲区
+   */
+  createBuffer(bufferOpt: BufferOption, attrOpt?: VertexAttrOption) {
+    bufferOpt = Object.assign(
+      {
+        usage: WebGLBufferUsage.STATIC_DRAW,
+      },
+      bufferOpt
+    );
+    const gl = this.gl;
+    // 创建缓冲
+    const buffer = gl.createBuffer();
+    // 绑定缓冲并写入数据
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    if (bufferOpt.data) {
+      gl.bufferData(gl.ARRAY_BUFFER, bufferOpt.data, gl[bufferOpt.usage]);
+    } else if (bufferOpt.size) {
+      gl.bufferData(gl.ARRAY_BUFFER, bufferOpt.size, gl[bufferOpt.usage]);
+    }
+    // 与属性建立关联
+    attrOpt && this.vertexAttribPointer(attrOpt);
+    return buffer;
+  }
+
+  /**
+   * 顶点数据与属性建立关联
+   */
+  vertexAttribPointer(attrOpt: VertexAttrOption) {
+    const gl = this.gl;
+    // 读取数据
+    gl.vertexAttribPointer(
+      attrOpt.index,
+      attrOpt.size,
+      gl[attrOpt.type],
+      attrOpt.normalized,
+      attrOpt.stride,
+      attrOpt.offset
+    );
+    // 建立关联
+    gl.enableVertexAttribArray(attrOpt.index);
   }
 }

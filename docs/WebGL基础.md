@@ -139,7 +139,7 @@ gl.vertexAttribPointer(attributeLocation, 3, gl.FLOAT, false, 0, 0);
 gl.drawArrays(gl.TRIANGLES, 0, 3);
 ```
 
-> 缓冲（Buffer）：表示一个不透明的缓冲区对象，储存诸如顶点或着色之类的数据。，参见：[WebGLBuffer - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLBuffer)
+> 缓冲（Buffer）：表示一个不透明的缓冲区对象，储存诸如顶点或着色之类的数据。参见：[WebGLBuffer - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLBuffer)
 >
 > 属性（Attributes）：**Attributes** 可以被 JavaScript 代码操作，也可以在 vertex shader 中被作为变量访问。Attributes 通常被用于存储颜色、纹理坐标以及其他需要在 JavaScript 代码和 vertex shader 之间互相传递的数据。参见：[Data in WebGL - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Data#attributes)
 
@@ -245,7 +245,7 @@ export class WebGLRender {
 }
 ```
 
-### 着色器程序传递数据的三种变量：`attribue`、`uniform`和`varying`
+### 着色器程序传递数据的三种变量限定词：`attribue`、`uniform`和`varying`
 
 以上三种变量不是类型变量（如`int`, `string`之类），而是范围变量，划定了其在着色器程序中个使用范围：
 
@@ -253,11 +253,50 @@ export class WebGLRender {
 - uniform：可在顶点着色器和片段着色器中使用，同样支持外部（WebGL）向其赋值，与`attribute`不同的是，`uniform`相对于当前程序相当于全局变量，即程序执行赋值过后，下次程序执行无需赋值，会保留上一次的赋值数据。
 - varying：顶点着色器向片段着色器传递数据的桥梁，不支持外部传值。
 
-### 创建对象
+### 数据传递
 
-### 矩阵
+在着色器程序中我们可以定义多种变量，而传递数据的三种变量限定词有：`attribute`、`uniform`和`varing`，那么这些数据又是通过什么表示和传递的？主要可以分为以下三类数据：
 
-## 绘制案例：绘制一个正方形
+#### 顶点数据（缓冲 | WebGLBuffer）
+
+> 在 WebGL 中，使用 [WebGLBuffer](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLBuffer) 记录，表示一个不透明的**缓冲**区对象，储存诸如顶点或着色之类的数据。
+
+使用步骤：
+
+- 创建缓冲：`gl.createBuffer()`
+- 绑定缓冲：`gl.bindBuffer(gl.ARRAY_BUFFER, buffer)`
+- 初始化数据存储区（写入数据）：`gl.bufferData()`
+- 读取数据：`gl.vertexAttribPointer ()`告诉显卡从当前绑定的缓冲区（`bindBuffer()`指定的缓冲区）中读取顶点数据
+- 与属性建立联系：`gl.enableVertexAttribArray ()`
+
+其中，`WebGLBuffer`本质上就是 js 中的类型数组：
+
+![img](../public/images/ae7173633c33a471eca91323d7174b58.png)
+
+这样，js 就可以用类型数组描述顶点数据，并通过上述步骤 API 绑定到创建的缓冲区，再与着色器程序中的属性建立关联，然后就能告知 GPU 读取缓冲区数据到着色器程序中执行了。
+
+#### 纹理数据（WebGLTexture）
+
+> **纹理**一般表示物体表面细节的一幅或几幅二维图形，也称纹理[贴图](https://baike.baidu.com/item/贴图)（_texture mapping_）当把纹理按照特定的方式映射到物体表面上的时候能使物体看上去更加真实。
+>
+> 在 WebGL 中，使用 [WebGLTexture](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLTexture) 表示，为不透明的纹理对象提供储存和状态等纹理操作。
+
+纹理数据的传递和顶点数据类似：
+
+- 创建纹理对象：`gl.createTexture()`
+- 设置纹理裁剪参数：`gl.texParameter[fi]()`
+- 绑定纹理对象：`gl.bindTexture(gl.TEXTURE_2D, texture)`
+- 设置纹理图像：纹理图源可以有很多类型，如 img、video、canvas 或 ImageBitMap，使用`gl.texImage2D`设置图像。
+
+![img](../public/images/a3046b9a55f73687d2e3c1ba7ebfdd36.png)
+
+#### uniform 类型数据
+
+除了使用缓冲传递数据到着色器中，如果是`uniform`类型的变量，还可以使用`gl.uniformMatrix[234]x[234]fv()`方法。
+
+#### 封装工具函数
+
+### 绘制一个正方形
 
 ## 使用着色器(shader)赋予颜色
 
@@ -274,11 +313,9 @@ export class WebGLRender {
 ## 扩展阅读
 
 - [入门 WebGL，看这一篇就够了](https://xie.infoq.cn/article/511aa64f69530ed3061829351)
+- [WebGL 教程 - MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Tutorial)
 - [GL Shader Language（GLSL）详解-基础语法 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/349296191)
-
 - [从 WebGL 到 WebGPU，网页图形的全新时代](https://new.qq.com/omn/20211220/20211220A03ZJM00.html)
 - [WebGL 与 WebGPU 比对](https://juejin.cn/post/7053137406463049742)
-
-https://book.douban.com/subject/26916420/
-
-https://book.douban.com/subject/25909351/
+- https://book.douban.com/subject/26916420/
+- https://book.douban.com/subject/25909351/
