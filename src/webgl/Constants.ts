@@ -49,7 +49,7 @@ export enum WebGLVertexDataType {
 /**
  * 顶点属性参数
  */
-export interface vertexAttrOption {
+export interface VertexAttrOption {
   /**顶点属性索引 */
   index: number;
   /**顶点属性组成数量 */

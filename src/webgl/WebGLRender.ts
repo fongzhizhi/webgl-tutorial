@@ -1,8 +1,8 @@
 import {
   BufferOption,
-  VertexAttrOption,
   WebGLBufferUsage,
   WebGLShaderType,
+  VertexAttrOption,
 } from "./Constants";
 
 /**
