@@ -17,7 +17,7 @@
 
 如果返回 null，则说明执行脚本的浏览器环境不支持该类型的渲染上下文。
 
-下面是获取上下文的简单<span class="example" key="1">示例</span>：
+下面是获取上下文的简单<span class="example" key="1">示例 1</span>：
 
 ```ts
 /**
@@ -306,7 +306,7 @@ export class WebGLRender {
 - 进入渲染状态，传递`uniform`类型值
 - 渲染（绘制）画布
 
-点击<span class="example" key="2">示例</span>可预览绘制效果。
+点击<span class="example" key="2">示例 2</span>可预览绘制效果。
 
 ```ts
 /**
@@ -335,7 +335,90 @@ export function drawASquare() {
 
 - 矩阵相关知识可参阅：[todo - 待补充]()
 
-## 使用着色器(shader)赋予颜色
+## 使用着色器赋予颜色
+
+上文绘制的正方形我们只设置了**顶点缓冲**用于绘制形状，而专门负责颜色的片段着色器还未进行颜色的渲染，我们在代码里写死了`gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0)`，内置变量`gl_FragColor`所输出的颜色用于随后的像素操作，所以顶点都被渲染为了白色，所绘制出来的正方形也就变成了白色。
+
+本章节的主要内容就是着色器颜色的设置和使用，假设本节的任务就是给正方形四个顶点设置不同的颜色。
+
+现在我们需要从外部传递顶点颜色来覆盖内置变量`gl_FragColor`，在片段着色器中，我们可以使用`uniform`和`varying`两种类型，在本案例中，我们需要为每个顶点设置不同颜色，所以更好地方法是使用顶点缓冲数据来传值，就像`aVertexPosition`属性那样，所以更适合使用`varying`类型接收从顶点着色器传来的顶点颜色值。
+
+因此我们需要改造以下着色器源码：
+
+- 片段着色器：增加`varying`类型变量**vColor**，用于接收顶点着色器传过来的色值。
+
+  ```ts
+  const fs = `
+    varying lowp vec4 vColor;
+    void main() {
+      gl_FragColor = vColor;
+    }
+  `;
+  ```
+
+- 顶点着色器：增加`attribute`类型变量**aVertexColor**，用于接收外界（JavaScript）设置的颜色缓冲，然后传递给**vColor**变量。
+
+  ```ts
+  const vs = `
+    attribute vec4 aVertexPosition;
+    attribute vec4 aVertexColor;
+  
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+  
+    varying lowp vec4 vColor;
+  
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      vColor = aVertexColor;
+    }
+  `;
+  ```
+
+修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`即可：
+
+点击<span class="example" key="3">示例 3</span>可预览绘制效果。
+
+```ts
+function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+  // 设置顶点华冲
+  // ...
+  // 设置颜色缓冲
+  const colors = [
+    1,
+    1,
+    1,
+    1, // 白色
+    1,
+    0,
+    0,
+    1, // 红色
+    0,
+    1,
+    0,
+    1, // 绿色
+    0,
+    0,
+    1,
+    1, // 蓝色
+  ];
+  const colorAttrOpt: VertexAttrOption = {
+    index: render.getAttribLocation(program, "aVertexColor"),
+    size: 4,
+    type: WebGLVertexDataType.FLOAT,
+    normalized: false,
+    stride: 0,
+    offset: 0,
+  };
+  render.createBuffer(
+    {
+      data: new Float32Array(colors),
+      usage: WebGLBufferUsage.STATIC_DRAW,
+    },
+    colorAttrOpt
+  );
+}
+```
 
 ## 让对象动起来
 

@@ -10,9 +10,9 @@ import {
 import { WebGLRender } from "../webgl/WebGLRender";
 
 /**
- * 绘制一个正方形
+ * 绘制一个带颜色的正方形
  */
-export function drawASquare() {
+export function drawASquareOfColor() {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -43,18 +43,23 @@ function initCanvas(gl: WebGLRenderingContext) {
  */
 function createProgram(render: WebGLRender) {
   const vs = `
-    attribute vec4 aVertexPosition;
+  attribute vec4 aVertexPosition;
+  attribute vec4 aVertexColor;
 
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
 
-    void main() {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
-  `;
-  const fs = `
+  varying lowp vec4 vColor;
+
   void main() {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    vColor = aVertexColor;
+  }
+`;
+  const fs = `
+  varying lowp vec4 vColor;
+  void main() {
+    gl_FragColor = vColor;
   }
 `;
   return render.createProgramBySource(vs, fs);
@@ -66,7 +71,21 @@ function createProgram(render: WebGLRender) {
  * @param program 着色器程序
  */
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
-  const vertices = [1.0, 1.0, 0, -1.0, 1.0, 0, 1.0, -1.0, 0, -1.0, -1.0, 0]; // 正方形顶点数据
+  // 设置顶点缓冲
+  const vertices = [
+    1.0,
+    1.0,
+    0, // 右上
+    -1.0,
+    1.0,
+    0, // 左上
+    1.0,
+    -1.0,
+    0, // 右下
+    -1.0,
+    -1.0,
+    0, // 左下
+  ]; // 正方形顶点数据
   const vertexAttrOpt: VertexAttrOption = {
     index: render.getAttribLocation(program, "aVertexPosition"),
     size: 3,
@@ -81,6 +100,41 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
     vertexAttrOpt
+  );
+
+  // 设置颜色(RGB)缓冲
+  const colors = [
+    1,
+    1,
+    1,
+    1, // 白色
+    1,
+    0,
+    0,
+    1, // 红色
+    0,
+    1,
+    0,
+    1, // 绿色
+    0,
+    0,
+    1,
+    1, // 蓝色
+  ];
+  const colorAttrOpt: VertexAttrOption = {
+    index: render.getAttribLocation(program, "aVertexColor"),
+    size: 4,
+    type: WebGLVertexDataType.FLOAT,
+    normalized: false,
+    stride: 0,
+    offset: 0,
+  };
+  render.createBuffer(
+    {
+      data: new Float32Array(colors),
+      usage: WebGLBufferUsage.STATIC_DRAW,
+    },
+    colorAttrOpt
   );
 }
 
