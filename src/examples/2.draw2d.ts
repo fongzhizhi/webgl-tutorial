@@ -1,131 +1,125 @@
 import { mat4 } from "gl-matrix";
+import { $$ } from "../utils/xml";
+import {
+  VertexAttrOption,
+  WebGLBufferUsage,
+  WebGLDrawType,
+  WebGLShaderType,
+  WebGLVertexDataType,
+} from "../webgl/Constants";
+import { WebGLRender } from "../webgl/WebGLRender";
 
 /**
- * 初始化着色器程序，让WebGL知道如何绘制我们的数据
+ * 绘制一个正方形
  */
-function initShaderProgram(
-  gl: WebGLRenderingContext,
-  vsSource: string,
-  fsSource: string
-) {
-  // 创建顶点着色器和片段着色器
-  const vertextShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+export function drawASquare() {
+  // 构建渲染器
+  const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
+  const gl = render.gl;
+  // 初始化画布
+  initCanvas(gl);
   // 创建着色器程序
-  const shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertextShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
-  // 创建失败
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert("初始化着色器程序失败：" + gl.getProgramInfoLog(shaderProgram));
-    return null;
-  }
-  return shaderProgram;
+  const program = createProgram(render);
+  // 创建顶点缓冲并关联顶点属性
+  loadVertexBuffer(render, program);
+  // 开启渲染状态，传递 uniform 变量值
+  loadUniform(render, program);
+  // 绘制
+  draw(gl);
 }
 
-interface ProgramInfo {
-  program: WebGLProgram;
-  attribLocations: {
-    vertexPosition: number;
-  };
-  uniformLocations: {
-    projectionMatrix: WebGLUniformLocation;
-    modelViewMatrix: WebGLUniformLocation;
-  };
-}
-
-/**
- * 获取着色器程序相关信息
- */
-function getProgramInfo(
-  gl: WebGLRenderingContext,
-  shaderProgram: WebGLProgram
-): ProgramInfo {
-  return {
-    program: shaderProgram,
-    attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-    },
-    uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(
-        shaderProgram,
-        "uProjectionMatrix"
-      ),
-      modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-    },
-  };
-}
-
-/**
- * 创建指定类型的着色器，上传source源码并编译
- */
-function loadShader(gl: WebGLRenderingContext, type: number, source: string) {
-  // 创建指定类型着色器
-  const shader = gl.createShader(type);
-  // 上传着色器源码
-  gl.shaderSource(shader, source);
-  // 编译着色器
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    alert("编译着色器失败");
-    gl.deleteShader(shader);
-    return null;
-  }
-  return shader;
-}
-
-interface BufferInfo {
-  position: WebGLBuffer;
-}
-
-/**
- * 初始化缓冲器
- */
-function initBuffers(gl: WebGLRenderingContext): BufferInfo {
-  // 创建并绑定缓冲器
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  // 顶点数据
-  const vertices = [1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0];
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  return {
-    position: positionBuffer,
-  };
-}
-
-/**
- * 绘制场景
- */
-function drawScene(
-  gl: WebGLRenderingContext,
-  programInfo: ProgramInfo,
-  buffers: BufferInfo
-) {
-  // 一些canvas的初始化工作
-  globalThis.clear(0, 0, 0, 1); // 使用黑色清空画布
+/**初始化画布状态 */
+function initCanvas(gl: WebGLRenderingContext) {
+  gl.clearColor(0, 0, 0, 1); // 使用完全不透明的黑色清除所有图像
   gl.clearDepth(1); // 清空所有图元
   gl.enable(gl.DEPTH_TEST); // 启用深度测试
   gl.depthFunc(gl.LEQUAL); // 指定深度比较函数
+  gl.clear(gl.COLOR_BUFFER_BIT); // 清空画布
+}
 
-  // 在绘制前清空画布
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+/**
+ * 创建着色器程序
+ * @param render
+ */
+function createProgram(render: WebGLRender) {
+  const vs = `
+    attribute vec4 aVertexPosition;
 
-  const filedOfView = (45 * Math.PI) / 180; // 弧度
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    }
+  `;
+  const fs = `
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  `;
+  return render.createProgramBySource(vs, fs);
+}
+
+/**
+ * 创建顶点缓冲并关联顶点属性
+ * @param render 渲染器
+ * @param program 着色器程序
+ */
+function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+  const vertices = [1.0, 1.0, 0, -1.0, 1.0, 0, 1.0, -1.0, 0, -1.0, -1.0, 0]; // 正方形顶点数据
+  const vertexAttrOpt: VertexAttrOption = {
+    index: render.getAttribLocation(program, "aVertexPosition"),
+    size: 3,
+    type: WebGLVertexDataType.FLOAT,
+    normalized: false,
+    stride: 0,
+    offset: 0,
+  };
+  render.createBuffer(
+    {
+      data: new Float32Array(vertices),
+      usage: WebGLBufferUsage.STATIC_DRAW,
+    },
+    vertexAttrOpt
+  );
+}
+
+/**
+ * 开启渲染状态，传递 uniform 变量值
+ * @param render 渲染器
+ * @param program 程序
+ */
+function loadUniform(render: WebGLRender, program: WebGLProgram) {
+  const gl = render.gl;
+  gl.useProgram(program); // 将程序添加到渲染状态(此状态开启后，才能关联uniform属性)
+  const projectionMatrixLoc = render.getUniformLocation(
+    program,
+    "uProjectionMatrix"
+  );
+  const modelViewMatrixLoc = render.getUniformLocation(
+    program,
+    "uModelViewMatrix"
+  );
+  const projectionMatrix = mat4.create();
+  const fieldOfView = (45 * Math.PI) / 180;
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
-  const zFar = 100;
-
-  const projectMatrix = mat4.create();
-  mat4.perspective(projectMatrix, filedOfView, aspect, zNear, zFar); // 生成具有给定边界的透视投影矩阵
-
+  const zFar = 100.0;
+  mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
   const modelViewMatrix = mat4.create();
-  mat4.translate(modelViewMatrix, modelViewMatrix, [-0, 0, -6]);
+  mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
+  // 关联参数值
+  gl.uniformMatrix4fv(projectionMatrixLoc, false, projectionMatrix);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, modelViewMatrix);
+}
 
-  const numComponents = 3;
-  const type = gl.FLOAT;
-  const normalize = false;
-  const stide = 0;
-  const offset = 0;
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+/**
+ * 绘制
+ * @param gl 绘图上下文
+ */
+function draw(gl: WebGLRenderingContext) {
+  const mode = gl[WebGLDrawType.TRIANGLE_STRIP]; // 绘制类型
+  const first = 0; // 绘制起点
+  const vertexCount = 4; // 绘制点总数
+  gl.drawArrays(mode, first, vertexCount);
 }

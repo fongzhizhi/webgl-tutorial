@@ -17,12 +17,23 @@ export class WebGLRender {
   /**上下文 */
   readonly gl: WebGLRenderingContext;
 
+  /**
+   * WebGL渲染器
+   * @param canvas canvas元素
+   * @param gl_attributes webgl上下文属性
+   */
   constructor(
     canvas: HTMLCanvasElement,
-    gl_attributes: WebGLContextAttributes
+    gl_attributes?: WebGLContextAttributes
   ) {
     this.canvas = canvas;
-    this.gl_attributes = gl_attributes;
+    this.gl_attributes = gl_attributes || {
+      depth: false,
+      antialias: false,
+      stencil: false,
+      alpha: false,
+      premultipliedAlpha: false,
+    };
     this.gl = canvas.getContext("webgl", gl_attributes);
   }
 
@@ -95,7 +106,7 @@ export class WebGLRender {
    * @param program 程序
    * @param name 属性名
    */
-  getAttrLocation(program: WebGLProgram, name: string) {
+  getAttribLocation(program: WebGLProgram, name: string) {
     const loc = this.gl.getAttribLocation(program, name);
     if (loc < 0) {
       throw new Error(`Location of attribute ${name} failed to obtain`);
@@ -104,7 +115,20 @@ export class WebGLRender {
   }
 
   /**
-   * 创建缓冲区
+   * 获取统一变量指向位置
+   * @param program 程序
+   * @param name 变量名
+   */
+  getUniformLocation(program: WebGLProgram, name: string) {
+    const loc = this.gl.getUniformLocation(program, name);
+    if (!loc) {
+      throw new Error(`Location of uniform ${name} failed to obtain`);
+    }
+    return loc;
+  }
+
+  /**
+   * 创建缓冲
    */
   createBuffer(bufferOpt: BufferOption, attrOpt?: VertexAttrOption) {
     bufferOpt = Object.assign(

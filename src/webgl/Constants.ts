@@ -63,3 +63,23 @@ export interface VertexAttrOption {
   /**顶点属性数组中第一部分的字节偏移量 */
   offset: GLintptr;
 }
+
+/**
+ * 绘制类型
+ */
+export enum WebGLDrawType {
+  /**绘制点阵 */
+  POINTS = "POINTS",
+  /**绘制连续线条 */
+  LINE_STRIP = "LINE_STRIP",
+  /**绘制收尾闭合的连续线条 */
+  LINE_LOOP = "LINE_STRIP",
+  /**绘制系列线段 */
+  LINES = "LINES",
+  /**绘制三角形带 */
+  TRIANGLE_STRIP = "TRIANGLE_STRIP",
+  /**绘制三角扇 */
+  TRIANGLE_FAN = "TRIANGLE_FAN",
+  /**绘制系列三角形 */
+  TRIANGLES = "TRIANGLES",
+}

@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const path = require("path");
+const _path = require("path");
 
 function server() {
   const app = express();
@@ -16,8 +16,10 @@ function server() {
 
   const port = 3030;
   app.use(express.static("dest"));
-  app.get("/readme", (req, res) => {
-    res.send(fs.readFileSync(path.resolve(__dirname, "README.md")).toString());
+  app.get("/docs/:path", (req, res) => {
+    const path = req.params.path;
+    const filePath = _path.resolve(__dirname, path.replace(/__/g, "/"));
+    res.send(fs.readFileSync(filePath, "utf-8"));
   });
   app.listen(port, () => {
     const url = `http://localhost:${port}`;

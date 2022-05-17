@@ -6,26 +6,35 @@ import { marked } from "marked";
 import hljs from "highlight.js";
 import { printStyleLog } from "./utils/util";
 import axios from "axios";
-import { $$ } from "./utils/xml";
+import { $$, $$$ } from "./utils/xml";
 import { exampleBackBtnEventInit, exampleEventInit } from "./app/event";
 
 window.onload = async () => {
   init();
-  await loadReadme();
+  const path = "docs/WebGL基础.md";
+  await loadDocs(path);
   initEvent();
   canvasDraw();
+  showExample("2");
 };
 
+/**展示示例 */
+function showExample(key: string) {
+  const el = $$(`[key="${key}"].example`) as HTMLElement;
+  el && el.click();
+}
+
 /**
- * 加载readme文档
+ * 加载文档
+ * @param path 文档相对路径(相对于根目录)
  */
-async function loadReadme() {
+async function loadDocs(path?: string) {
   await axios
-    .get("http://localhost:3030/readme")
+    .get("http://localhost:3030/docs/" + path.replace(/\//g, "__"))
     .then((res) => {
       if (res && res.data) {
-        const readMeHtml = marked(res.data, {});
-        document.getElementById("readme").innerHTML = readMeHtml;
+        const docsHtml = marked(res.data, {});
+        document.getElementById("docs").innerHTML = docsHtml;
       }
     })
     .catch((err) => {

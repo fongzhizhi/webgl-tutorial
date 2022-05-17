@@ -294,9 +294,46 @@ export class WebGLRender {
 
 除了使用缓冲传递数据到着色器中，如果是`uniform`类型的变量，还可以使用`gl.uniformMatrix[234]x[234]fv()`方法。
 
-#### 封装工具函数
-
 ### 绘制一个正方形
+
+要在画布上绘制出一个正方形，我们执行以下逻辑：
+
+- 创建一个着色器程序
+  - 顶点着色器
+  - 片段着色器
+  - webgl 程序
+- 创建缓冲以传递顶点数据
+- 进入渲染状态，传递`uniform`类型值
+- 渲染（绘制）画布
+
+点击<span class="example" key="2">示例</span>可预览绘制效果。
+
+```ts
+/**
+ * 绘制一个正方形
+ */
+export function drawASquare() {
+  // 构建渲染器
+  const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
+  const gl = render.gl;
+  // 初始化画布
+  initCanvas(gl);
+  // 创建着色器程序
+  const program = createProgram(render);
+  // 创建顶点缓冲并关联顶点属性
+  loadVertexBuffer(render, program);
+  // 开启渲染状态，传递 uniform 变量值
+  loadUniform(render, program);
+  // 绘制
+  draw(gl);
+}
+```
+
+代码细节可查阅`src/examples/2.draw2d.ts`文件。可能查阅代码细节后还有诸多疑惑，比如着色器程序源码的编写、矩阵的计算等，这些都需要专门的学习，由于内容较多，不在此处展开说明。
+
+- GLSL 相关知识可参阅：[todo - 待补充]()
+
+- 矩阵相关知识可参阅：[todo - 待补充]()
 
 ## 使用着色器(shader)赋予颜色
 
