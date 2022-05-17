@@ -1,6 +1,6 @@
 import { getWebGLContext } from "../examples/1.webglContext";
-import { drawASquare } from "../examples/2.draw2d";
-import { drawASquareOfColor } from "../examples/3.setColot";
+import { drawASquare } from "../examples/2.drawASquare";
+import { drawASquareOfColor } from "../examples/3.drawASquareOfColor";
 
 /**
  * 示例函数映射表

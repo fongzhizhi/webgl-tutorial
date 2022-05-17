@@ -4,7 +4,6 @@ import {
   VertexAttrOption,
   WebGLBufferUsage,
   WebGLDrawType,
-  WebGLShaderType,
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
