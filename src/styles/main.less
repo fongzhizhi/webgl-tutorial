@@ -34,5 +34,27 @@
     .info {
       padding-bottom: 15px;
     }
+    .examples {
+      position: relative;
+      width: 250px;
+      border: solid 1px #5f83b1;
+      border-left-width: thick;
+      top: -390px;
+      left: calc(50% + 340px);
+      text-align: left;
+      ul {
+        max-height: 240px;
+        overflow: auto;
+        list-style: square;
+        padding-left: 25px;
+        line-height: 25px;
+        li {
+          cursor: pointer;
+          &:hover {
+            color: #49678e;
+          }
+        }
+      }
+    }
   }
 }

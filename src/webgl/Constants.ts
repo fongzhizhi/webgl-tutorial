@@ -21,6 +21,15 @@ export enum WebGLBufferUsage {
 }
 
 /**
+ * 缓冲类型
+ * @description gl.bindBuffer 使用
+ */
+export enum WebGLBufferType {
+  ARRAY_BUFFER = "ARRAY_BUFFER",
+  ELEMENT_ARRAY_BUFFER = "ELEMENT_ARRAY_BUFFER",
+}
+
+/**
  * 缓冲参数
  */
 export type BufferOption = Partial<{
@@ -82,4 +91,32 @@ export enum WebGLDrawType {
   TRIANGLE_FAN = "TRIANGLE_FAN",
   /**绘制系列三角形 */
   TRIANGLES = "TRIANGLES",
+}
+
+/**绘制物体的缓冲数据类型 */
+export enum WebGLDrawElementType {
+  UNSIGNED_BYTE = "UNSIGNED_BYTE",
+  UNSIGNED_SHORT = "UNSIGNED_SHORT",
+}
+
+/**
+ * WebGL单位坐标系
+ * @description 三维迪卡尔坐标系
+ * + x: 左负右正
+ * + y: 上正下负
+ * + z: 前正后负
+ */
+export enum WebGLCoordinate {
+  /**x左 */
+  X_L = -1,
+  /**x右 */
+  X_R = 1,
+  /**y上 */
+  Y_T = 1,
+  /**y下 */
+  Y_B = -1,
+  /**z前 */
+  Z_F = 1,
+  /**z后 */
+  Z_B = -1,
 }

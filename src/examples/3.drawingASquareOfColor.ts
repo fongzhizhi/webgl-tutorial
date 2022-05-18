@@ -21,7 +21,9 @@ export function drawingASquareOfColor(radian?: number) {
   // 创建顶点缓冲并关联顶点属性
   loadVertexBuffer(render, program);
   // 开启渲染状态，传递 uniform 变量值
-  loadUniform(render, program, radian);
+  loadUniform(render, program, {
+    z: radian,
+  });
   // 绘制
   draw(gl);
 }
@@ -30,7 +32,7 @@ export function drawingASquareOfColor(radian?: number) {
  * 创建着色器程序
  * @param render
  */
-function createProgram(render: WebGLRender) {
+export function createProgram(render: WebGLRender) {
   const vs = `
   attribute vec4 aVertexPosition;
   attribute vec4 aVertexColor;
@@ -61,7 +63,7 @@ function createProgram(render: WebGLRender) {
  */
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
   // 设置顶点缓冲
-  const vertices = [
+  const vertexs = [
     1.0,
     1.0,
     0, // 右上
@@ -83,9 +85,9 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     stride: 0,
     offset: 0,
   };
-  render.createBuffer(
+  render.createArrayBuffer(
     {
-      data: new Float32Array(vertices),
+      data: new Float32Array(vertexs),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
     vertexAttrOpt
@@ -118,7 +120,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     stride: 0,
     offset: 0,
   };
-  render.createBuffer(
+  render.createArrayBuffer(
     {
       data: new Float32Array(colors),
       usage: WebGLBufferUsage.STATIC_DRAW,

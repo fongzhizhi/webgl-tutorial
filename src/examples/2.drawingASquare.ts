@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, ReadonlyVec3 } from "gl-matrix";
 import { $$ } from "../utils/xml";
 import {
   VertexAttrOption,
@@ -65,7 +65,7 @@ function createProgram(render: WebGLRender) {
  * @param program 着色器程序
  */
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
-  const vertices = [1.0, 1.0, 0, -1.0, 1.0, 0, 1.0, -1.0, 0, -1.0, -1.0, 0]; // 正方形顶点数据
+  const vertexs = [1.0, 1.0, 0, -1.0, 1.0, 0, 1.0, -1.0, 0, -1.0, -1.0, 0]; // 正方形顶点数据
   const vertexAttrOpt: VertexAttrOption = {
     index: render.getAttribLocation(program, "aVertexPosition"),
     size: 3,
@@ -74,9 +74,9 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     stride: 0,
     offset: 0,
   };
-  render.createBuffer(
+  render.createArrayBuffer(
     {
-      data: new Float32Array(vertices),
+      data: new Float32Array(vertexs),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
     vertexAttrOpt
@@ -92,7 +92,11 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
 export function loadUniform(
   render: WebGLRender,
   program: WebGLProgram,
-  radian?: number
+  radian?: Partial<{
+    x: number;
+    y: number;
+    z: number;
+  }>
 ) {
   const gl = render.gl;
   gl.useProgram(program); // 将程序添加到渲染状态(此状态开启后，才能关联uniform属性)
@@ -112,8 +116,13 @@ export function loadUniform(
   mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
   const modelViewMatrix = mat4.create();
   mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
-  if (!isNaN(radian)) {
-    mat4.rotate(modelViewMatrix, modelViewMatrix, radian, [0, 0, 1]); // 绕z轴旋转 radian 度(弧度)
+  if (radian) {
+    !isNaN(radian.x) &&
+      mat4.rotate(modelViewMatrix, modelViewMatrix, radian.x, [1, 0, 0]); // 绕 x 轴旋转
+    !isNaN(radian.y) &&
+      mat4.rotate(modelViewMatrix, modelViewMatrix, radian.y, [0, 1, 0]); // 绕 y 轴旋转
+    !isNaN(radian.z) &&
+      mat4.rotate(modelViewMatrix, modelViewMatrix, radian.z, [0, 0, 1]); // 绕 z 轴旋转
   }
   // 关联参数值
   gl.uniformMatrix4fv(projectionMatrixLoc, false, projectionMatrix);

@@ -17,7 +17,7 @@
 
 如果返回 null，则说明执行脚本的浏览器环境不支持该类型的渲染上下文。
 
-<span class="example" key="1">实例 1</span>：获取绘图上下文
+<span class="example" key="1">实例 1：获取绘图上下文</span>：
 
 ```ts
 /**
@@ -306,7 +306,7 @@ export class WebGLRender {
 - 进入渲染状态，传递`uniform`类型值
 - 渲染（绘制）画布
 
-<span class="example" key="2">实例 2</span>：绘制一个正方形
+<span class="example" key="2">实例 2：绘制一个正方形</span>
 
 ```ts
 /**
@@ -375,7 +375,7 @@ export function drawingASquare() {
   `;
   ```
 
-修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`，<span class="example" key="3">实例 3</span>：绘制一个带颜色的正方形
+修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`，<span class="example" key="3">实例 3：绘制一个带颜色的正方形</span>
 
 ```ts
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
@@ -408,7 +408,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     stride: 0,
     offset: 0,
   };
-  render.createBuffer(
+  render.createArrayBuffer(
     {
       data: new Float32Array(colors),
       usage: WebGLBufferUsage.STATIC_DRAW,
@@ -428,7 +428,7 @@ mat4.rotate(modelViewMatrix, modelViewMatrix, radian, [0, 0, 1]); // 绕z轴旋�
 
 这里，我们需要不断更新`radian`的值来更新`modelViewMatrix`属性的值，就能让正方形动起来。
 
-”不断更新“这一操作可以利用`requestAnimationFrame`来实现，而`radian`的值只需要随时间自动变化即可，<span class="example" key="4">实例 4</span>：绘制一个运动的正方形
+”不断更新“这一操作可以利用`requestAnimationFrame`来实现，而`radian`的值只需要随时间自动变化即可，<span class="example" key="4">实例 4：绘制一个运动的正方形</span>
 
 ```ts
 /**
@@ -459,6 +459,8 @@ function render(now: number) {
 ```
 
 ## 创建 3D 物体
+
+<span class="example" key="5">实例 5：绘制一个正方体</span>
 
 ## 使用纹理贴图
 

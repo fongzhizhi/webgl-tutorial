@@ -13,7 +13,7 @@ window.onload = async () => {
   // const path = 'README.MD';
   await loadDocs(path);
   canvasDraw();
-  showExample("4");
+  showExample("5");
 };
 
 /**展示实例 */

@@ -3,6 +3,7 @@ import {
   WebGLBufferUsage,
   WebGLShaderType,
   VertexAttrOption,
+  WebGLBufferType,
 } from "./Constants";
 
 /**
@@ -130,7 +131,25 @@ export class WebGLRender {
   /**
    * 创建缓冲
    */
-  createBuffer(bufferOpt: BufferOption, attrOpt?: VertexAttrOption) {
+  createBuffer(bufferOpt: BufferOption, bufferType: WebGLBufferType) {
+    const gl = this.gl;
+    // 创建缓冲
+    const buffer = gl.createBuffer();
+    // 绑定缓冲并写入数据
+    const type = gl[bufferType];
+    gl.bindBuffer(type, buffer);
+    const usage = gl[bufferOpt.usage];
+    if (bufferOpt.data) {
+      gl.bufferData(type, bufferOpt.data, usage);
+    } else if (bufferOpt.size) {
+      gl.bufferData(type, bufferOpt.size, usage);
+    }
+  }
+
+  /**
+   * 创建顶点属性缓冲
+   */
+  createArrayBuffer(bufferOpt: BufferOption, attrOpt?: VertexAttrOption) {
     bufferOpt = Object.assign(
       {
         usage: WebGLBufferUsage.STATIC_DRAW,
@@ -139,14 +158,7 @@ export class WebGLRender {
     );
     const gl = this.gl;
     // 创建缓冲
-    const buffer = gl.createBuffer();
-    // 绑定缓冲并写入数据
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    if (bufferOpt.data) {
-      gl.bufferData(gl.ARRAY_BUFFER, bufferOpt.data, gl[bufferOpt.usage]);
-    } else if (bufferOpt.size) {
-      gl.bufferData(gl.ARRAY_BUFFER, bufferOpt.size, gl[bufferOpt.usage]);
-    }
+    const buffer = this.createBuffer(bufferOpt, WebGLBufferType.ARRAY_BUFFER);
     // 与属性建立关联
     attrOpt && this.vertexAttribPointer(attrOpt);
     return buffer;
