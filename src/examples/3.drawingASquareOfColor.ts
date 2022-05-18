@@ -1,17 +1,16 @@
-import { mat4 } from "gl-matrix";
 import { $$ } from "../utils/xml";
 import {
   VertexAttrOption,
   WebGLBufferUsage,
-  WebGLDrawType,
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
+import { initCanvas, draw, loadUniform } from "./2.drawingASquare";
 
 /**
  * 绘制一个带颜色的正方形
  */
-export function drawASquareOfColor() {
+export function drawingASquareOfColor(radian?: number) {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -22,18 +21,9 @@ export function drawASquareOfColor() {
   // 创建顶点缓冲并关联顶点属性
   loadVertexBuffer(render, program);
   // 开启渲染状态，传递 uniform 变量值
-  loadUniform(render, program);
+  loadUniform(render, program, radian);
   // 绘制
   draw(gl);
-}
-
-/**初始化画布状态 */
-function initCanvas(gl: WebGLRenderingContext) {
-  gl.clearColor(0, 0, 0, 1); // 使用完全不透明的黑色清除所有图像
-  gl.clearDepth(1); // 清空所有图元
-  gl.enable(gl.DEPTH_TEST); // 启用深度测试
-  gl.depthFunc(gl.LEQUAL); // 指定深度比较函数
-  gl.clear(gl.COLOR_BUFFER_BIT); // 清空画布
 }
 
 /**
@@ -135,44 +125,4 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     },
     colorAttrOpt
   );
-}
-
-/**
- * 开启渲染状态，传递 uniform 变量值
- * @param render 渲染器
- * @param program 程序
- */
-function loadUniform(render: WebGLRender, program: WebGLProgram) {
-  const gl = render.gl;
-  gl.useProgram(program); // 将程序添加到渲染状态(此状态开启后，才能关联uniform属性)
-  const projectionMatrixLoc = render.getUniformLocation(
-    program,
-    "uProjectionMatrix"
-  );
-  const modelViewMatrixLoc = render.getUniformLocation(
-    program,
-    "uModelViewMatrix"
-  );
-  const projectionMatrix = mat4.create();
-  const fieldOfView = (45 * Math.PI) / 180;
-  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-  const zNear = 0.1;
-  const zFar = 100.0;
-  mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-  const modelViewMatrix = mat4.create();
-  mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
-  // 关联参数值
-  gl.uniformMatrix4fv(projectionMatrixLoc, false, projectionMatrix);
-  gl.uniformMatrix4fv(modelViewMatrixLoc, false, modelViewMatrix);
-}
-
-/**
- * 绘制
- * @param gl 绘图上下文
- */
-function draw(gl: WebGLRenderingContext) {
-  const mode = gl[WebGLDrawType.TRIANGLE_STRIP]; // 绘制类型
-  const first = 0; // 绘制起点
-  const vertexCount = 4; // 绘制点总数
-  gl.drawArrays(mode, first, vertexCount);
 }

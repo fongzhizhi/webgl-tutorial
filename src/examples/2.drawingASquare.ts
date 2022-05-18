@@ -11,7 +11,7 @@ import { WebGLRender } from "../webgl/WebGLRender";
 /**
  * 绘制一个正方形
  */
-export function drawASquare() {
+export function drawingASquare() {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -28,7 +28,7 @@ export function drawASquare() {
 }
 
 /**初始化画布状态 */
-function initCanvas(gl: WebGLRenderingContext) {
+export function initCanvas(gl: WebGLRenderingContext) {
   gl.clearColor(0, 0, 0, 1); // 使用完全不透明的黑色清除所有图像
   gl.clearDepth(1); // 清空所有图元
   gl.enable(gl.DEPTH_TEST); // 启用深度测试
@@ -87,8 +87,13 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
  * 开启渲染状态，传递 uniform 变量值
  * @param render 渲染器
  * @param program 程序
+ * @param radian modelViewMatrix的旋转弧度
  */
-function loadUniform(render: WebGLRender, program: WebGLProgram) {
+export function loadUniform(
+  render: WebGLRender,
+  program: WebGLProgram,
+  radian?: number
+) {
   const gl = render.gl;
   gl.useProgram(program); // 将程序添加到渲染状态(此状态开启后，才能关联uniform属性)
   const projectionMatrixLoc = render.getUniformLocation(
@@ -107,6 +112,9 @@ function loadUniform(render: WebGLRender, program: WebGLProgram) {
   mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
   const modelViewMatrix = mat4.create();
   mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
+  if (!isNaN(radian)) {
+    mat4.rotate(modelViewMatrix, modelViewMatrix, radian, [0, 0, 1]); // 绕z轴旋转 radian 度(弧度)
+  }
   // 关联参数值
   gl.uniformMatrix4fv(projectionMatrixLoc, false, projectionMatrix);
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, modelViewMatrix);
@@ -116,7 +124,7 @@ function loadUniform(render: WebGLRender, program: WebGLProgram) {
  * 绘制
  * @param gl 绘图上下文
  */
-function draw(gl: WebGLRenderingContext) {
+export function draw(gl: WebGLRenderingContext) {
   const mode = gl[WebGLDrawType.TRIANGLE_STRIP]; // 绘制类型
   const first = 0; // 绘制起点
   const vertexCount = 4; // 绘制点总数

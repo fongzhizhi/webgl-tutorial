@@ -17,7 +17,7 @@
 
 如果返回 null，则说明执行脚本的浏览器环境不支持该类型的渲染上下文。
 
-下面是获取上下文的简单<span class="example" key="1">示例 1</span>：
+<span class="example" key="1">实例 1</span>：获取绘图上下文
 
 ```ts
 /**
@@ -306,13 +306,13 @@ export class WebGLRender {
 - 进入渲染状态，传递`uniform`类型值
 - 渲染（绘制）画布
 
-点击<span class="example" key="2">示例 2</span>可预览绘制效果。
+<span class="example" key="2">实例 2</span>：绘制一个正方形
 
 ```ts
 /**
  * 绘制一个正方形
  */
-export function drawASquare() {
+export function drawingASquare() {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -329,7 +329,7 @@ export function drawASquare() {
 }
 ```
 
-代码细节可查阅`src/examples/2.drawASquare.ts`文件。可能查阅代码细节后还有诸多疑惑，比如着色器程序源码的编写、矩阵的计算等，这些都需要专门的学习，由于内容较多，不在此处展开说明。
+代码细节可查阅`src/examples/2.drawingASquare.ts`文件。可能查阅代码细节后还有诸多疑惑，比如着色器程序源码的编写、矩阵的计算等，这些都需要专门的学习，由于内容较多，不在此处展开说明。
 
 - GLSL 相关知识可参阅：[todo - 待补充]()
 
@@ -375,9 +375,7 @@ export function drawASquare() {
   `;
   ```
 
-修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`即可：
-
-点击<span class="example" key="3">示例 3</span>可预览绘制效果。
+修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`，<span class="example" key="3">实例 3</span>：绘制一个带颜色的正方形
 
 ```ts
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
@@ -421,6 +419,44 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
 ```
 
 ## 让对象动起来
+
+还是以上面绘制的正方形为例，要让正方形动起来，比如一直旋转，就需要不断改变正方形的旋转角度，这个值可以通过修改程序属性`modelViewMatrix`来实现，我们只需要在设置`modelViewMatrix`参数的地方增加代码：
+
+```ts
+mat4.rotate(modelViewMatrix, modelViewMatrix, radian, [0, 0, 1]); // 绕z轴旋转 radian 度(弧度)
+```
+
+这里，我们需要不断更新`radian`的值来更新`modelViewMatrix`属性的值，就能让正方形动起来。
+
+”不断更新“这一操作可以利用`requestAnimationFrame`来实现，而`radian`的值只需要随时间自动变化即可，<span class="example" key="4">实例 4</span>：绘制一个运动的正方形
+
+```ts
+/**
+ * 绘制一个运动的正方形
+ */
+export function drawingAAnimatingSquare() {
+  requestAnimationFrame(render);
+}
+
+/**上一刻 */
+let last = window.performance.now() / 1000;
+/**旋转弧度 */
+let radian = 0;
+/**旋转速度 */
+const speed = 2;
+/**
+ * 渲染
+ * @param now 当前时刻(1000s)
+ */
+function render(now: number) {
+  now = now / 1000; // 转为ms
+  const deltaTime = now - last; // 经过的时间
+  radian += deltaTime * speed; // 随时间变化更新旋转弧度
+  last = now;
+  drawingASquareOfColor(radian);
+  requestAnimationFrame(render);
+}
+```
 
 ## 创建 3D 物体
 

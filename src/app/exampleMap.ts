@@ -1,20 +1,22 @@
 import { getWebGLContext } from "../examples/1.webglContext";
-import { drawASquare } from "../examples/2.drawASquare";
-import { drawASquareOfColor } from "../examples/3.drawASquareOfColor";
+import { drawingASquare } from "../examples/2.drawingASquare";
+import { drawingASquareOfColor } from "../examples/3.drawingASquareOfColor";
+import { drawingAAnimatingSquare } from "../examples/4.drawingAAnimatingSquare";
 
 /**
- * 示例函数映射表
+ * 实例函数映射表
  */
 const ExampleMap: {
   [key: string]: () => void;
 } = {
   1: getWebGLContext,
-  2: drawASquare,
-  3: drawASquareOfColor,
+  2: drawingASquare,
+  3: drawingASquareOfColor,
+  4: drawingAAnimatingSquare,
 };
 
 /**
- * 返回示例回调函数
+ * 返回实例回调函数
  */
 export function getExampleCall(key: string) {
   return ExampleMap[key] || null;

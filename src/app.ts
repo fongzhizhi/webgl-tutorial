@@ -5,11 +5,6 @@ import "highlight.js/styles/vs.css";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { $$ } from "./utils/xml";
-import {
-  exampleBackBtnEventInit,
-  exampleEventInit,
-  pathAnchorEventInit,
-} from "./app/event";
 import { loadDocs } from "./utils/router";
 
 window.onload = async () => {
@@ -18,10 +13,10 @@ window.onload = async () => {
   // const path = 'README.MD';
   await loadDocs(path);
   canvasDraw();
-  showExample("3");
+  showExample("4");
 };
 
-/**展示示例 */
+/**展示实例 */
 function showExample(key: string) {
   const el = $$(`[key="${key}"].example`) as HTMLElement;
   el && el.click();
