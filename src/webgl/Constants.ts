@@ -25,7 +25,9 @@ export enum WebGLBufferUsage {
  * @description gl.bindBuffer 使用
  */
 export enum WebGLBufferType {
+  /**包含顶点属性的Buffer，如顶点坐标，纹理坐标数据或顶点颜色数据 */
   ARRAY_BUFFER = "ARRAY_BUFFER",
+  /**用于元素索引的Buffer */
   ELEMENT_ARRAY_BUFFER = "ELEMENT_ARRAY_BUFFER",
 }
 

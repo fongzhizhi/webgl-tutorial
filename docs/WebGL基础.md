@@ -460,7 +460,103 @@ function render(now: number) {
 
 ## 创建 3D 物体
 
-<span class="example" key="5">实例 5：绘制一个正方体</span>
+上面的案例中我们绘制了一个正方形，需要能够描述一个面的四个顶点，要绘制一个 3D 物体，比如一个正方体，就需要 6 个面，每个面同样需要四个点，合计就是 24 个点。此外，要绘制出 3D 物体，就不能再使用`gl.drawArrays`来绘制了，需要替换为`gl.drawElements`。
+
+所以绘制逻辑更改为如下代码：
+
+```ts
+function draw(gl: WebGLRenderingContext) {
+  const mode = gl[WebGLDrawType.TRIANGLE_STRIP]; // 绘制类型
+  const type = gl[WebGLDrawElementType.UNSIGNED_SHORT]; // 缓冲类型
+  const vertexCount = 36; // 顶点数量(6个面，每个面由两个三角形组成)
+  gl.drawElements(mode, vertexCount, type, 0);
+}
+```
+
+现在，我们还需要更新缓冲数据：
+
+- 顶点缓冲：由正方形的一个面 4 个点，更新为正方体的 6 个面，24 个顶点（虽然实际上只有 8 个坐标不同的顶点，但是每个面的顶点都可以有自己的颜色，虽然顶点坐标存在重复，但颜色值其实是不一样的）。
+
+  ```ts
+  // 前面
+  const frontFace: number[] = [].concat(
+    [-1, -1, 1],
+    [1, -1, 1],
+    [1, 1, 1],
+    [-1, 1, 1]
+  );
+  // ...
+  const vertexs = [].concat(
+    // 前面
+    frontFace,
+    // 背面
+    backFace,
+    // 顶面
+    topFace,
+    // 底面
+    bottomFace,
+    // 右面
+    rightFace,
+    // 左面
+    leftFace
+  );
+  ```
+
+- 颜色缓冲：由正方形的四个顶点颜色，更新为立方体 24 个顶点的的颜色。
+
+  ```ts
+  // 每个面的颜色
+  const faceColors = [
+    [1.0, 1.0, 1.0, 1.0], // Front face: white
+    [1.0, 0.0, 0.0, 1.0], // Back face: red
+    [0.0, 1.0, 0.0, 1.0], // Top face: green
+    [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
+    [1.0, 1.0, 0.0, 1.0], // Right face: yellow
+    [1.0, 0.0, 1.0, 1.0], // Left face: purple
+  ];
+  // 将面的颜色赋予点
+  let vertexColors: number[] = [];
+  for (let i = 0; i < faceColors.length; i++) {
+    const c = faceColors[i];
+    // 每个面的四个点颜色相同
+    vertexColors = vertexColors.concat(c, c, c, c);
+  }
+  ```
+
+- 顶点索引缓冲：由于使用两个三角形绘制一个面，也就需要 6 个点，而一个面的顶点数量只有 4 个，这个时候就需要利用顶点索引缓冲来告诉`webgl`如何读取顶点数据，比如一个面的顶点是`[A, B, C, D]`，绘制时需要的就是`[A, B, C, A, C, D]`，对应的索引就是`[0, 1, 2, 0, 2, 3]`。（可能你会问`[A, B, C, C, D, A]`的组合同样能绘制出两个三角形，为啥不能这样取点？这其实和**绘制结束点**有关，由于绘制的是三角形，比如绘制`[A, B, C]`这三个点时，落点其实是 A 点，即需要闭合，否则就不是三角形而是三角边了，所以下一个三角形的起点同样是 A 点，而不能是其他点）
+
+  ```ts
+  // 顶点索引(每个面需要使用到四个点，由两个三角形组成，每个三角形三个顶点，实际绘制时使用6个点)
+  const vertexIndex: number[] = [];
+  for (let i = 0; i < 6; i++) {
+    const j = i * 4;
+    vertexIndex.push(j, j + 1, j + 2);
+    vertexIndex.push(j, j + 2, j + 3);
+  }
+  ```
+
+<span class="example" key="5">实例 5：绘制一个正方体</span>（以下代码除了`loadVertexBuffer`的缓冲数据与正方形有差异，其余代码无差别）
+
+```ts
+export function drawingACube(radian: number) {
+  // 构建渲染器
+  const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
+  const gl = render.gl;
+  // 初始化画布
+  initCanvas(gl);
+  // 创建着色器程序
+  const program = createProgram(render);
+  // 创建顶点缓冲并关联顶点属性
+  loadVertexBuffer(render, program);
+  // 开启渲染状态，传递 uniform  变量
+  loadUniform(render, program, {
+    y: radian * 0.7,
+    z: radian,
+  });
+  // 绘制
+  draw(gl);
+}
+```
 
 ## 使用纹理贴图
 

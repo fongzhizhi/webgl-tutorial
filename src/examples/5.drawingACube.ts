@@ -154,7 +154,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
 
   for (let i = 0; i < faceColors.length; i++) {
     const c = faceColors[i];
-    // 每个点四个点颜色相同
+    // 每个面的四个点颜色相同
     vertexColors = vertexColors.concat(c, c, c, c);
   }
   const colorAttrOpt: VertexAttrOption = {
