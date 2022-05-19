@@ -3,11 +3,12 @@ import { drawingASquare } from "../examples/2.drawingASquare";
 import { drawingASquareOfColor } from "../examples/3.drawingASquareOfColor";
 import { drawingAAnimatingSquare } from "../examples/4.drawingAAnimatingSquare";
 import { drawingAAnimationCube } from "../examples/5.drawingACube";
+import { usingTextureOnCube } from "../examples/6.usingTextureOnCube";
 
 /**
  * 实例函数映射表
  */
-const ExampleMap: {
+export const ExampleMap: {
   [key: string]: () => void;
 } = {
   1: getWebGLContext,
@@ -15,6 +16,7 @@ const ExampleMap: {
   3: drawingASquareOfColor,
   4: drawingAAnimatingSquare,
   5: drawingAAnimationCube,
+  6: usingTextureOnCube,
 };
 
 /**

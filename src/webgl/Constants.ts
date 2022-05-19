@@ -122,3 +122,77 @@ export enum WebGLCoordinate {
   /**z后 */
   Z_B = -1,
 }
+
+/**
+ * 2D纹理图像颜色组件类型
+ */
+export enum TexImage2DInternalformat {
+  RGBA = "RGBA",
+  RGB = "RGB",
+  LUMINANCE_ALPHA = "LUMINANCE_ALPHA",
+  LUMINANCE = "LUMINANCE",
+  ALPHA = "ALPHA",
+}
+
+/**
+ * 2D纹理图像纹素数据的数据类型
+ */
+export enum TexImage2DTexelType {
+  UNSIGNED_BYTE = "UNSIGNED_BYTE",
+  UNSIGNED_SHORT_5_6_5 = "UNSIGNED_SHORT_5_6_5",
+  UNSIGNED_SHORT_4_4_4_4 = "UNSIGNED_SHORT_4_4_4_4",
+  UNSIGNED_SHORT_5_5_5_1 = "UNSIGNED_SHORT_5_5_5_1",
+}
+
+/**纹理放大滤波器 */
+export enum TexParameter_Mag_Filter {
+  /**default */
+  LINEAR = "LINEAR",
+  NEAREST = "NEAREST",
+}
+
+/**纹理缩小滤波器 */
+export enum TexParameter_Min_Filter {
+  LINEAR = "LINEAR",
+  NEAREST = "NEAREST",
+  NEAREST_MIPMAP_NEAREST = "NEAREST_MIPMAP_NEAREST",
+  LINEAR_MIPMAP_NEAREST = "LINEAR_MIPMAP_NEAREST",
+  /**default */
+  NEAREST_MIPMAP_LINEAR = "NEAREST_MIPMAP_LINEAR",
+  LINEAR_MIPMAP_LINEAR = "LINEAR_MIPMAP_LINEAR",
+}
+
+/**纹理坐标水平填充s | 纹理坐标垂直填充t*/
+export enum TexParameter_Wrap_ST {
+  /**default */
+  REPEAT = "REPEAT",
+  CLAMP_TO_EDGE = "CLAMP_TO_EDGE",
+  MIRRORED_REPEAT = "MIRRORED_REPEAT",
+}
+
+export interface texImage2DOption {
+  /**详细级别(0是基本图像等级, n级别) */
+  level: number;
+  /**颜色组件类型 */
+  internalformat: TexImage2DInternalformat;
+  /**纹理宽度 */
+  width?: number;
+  /**纹理高度 */
+  height?: number;
+  /**texel数据的数据类型 */
+  type: TexImage2DTexelType;
+  /**像素源 */
+  imageSource: TexImageSource | ArrayBufferView;
+}
+
+/**纹理参数 */
+export type TexParam = Partial<{
+  /**纹理放大滤波器 */
+  mag_filter: TexParameter_Mag_Filter;
+  /**纹理缩小滤波器 */
+  min_filter: TexParameter_Min_Filter;
+  /**纹理坐标水平填充s */
+  wrap_s: TexParameter_Wrap_ST;
+  /**纹理坐标垂直填充t */
+  wrap_t: TexParameter_Wrap_ST;
+}>;

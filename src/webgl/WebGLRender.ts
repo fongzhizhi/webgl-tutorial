@@ -4,6 +4,13 @@ import {
   WebGLShaderType,
   VertexAttrOption,
   WebGLBufferType,
+  TexImage2DInternalformat,
+  TexImage2DTexelType,
+  TexParameter_Min_Filter,
+  TexParameter_Mag_Filter,
+  TexParameter_Wrap_ST,
+  TexParam,
+  texImage2DOption,
 } from "./Constants";
 
 /**
@@ -180,5 +187,68 @@ export class WebGLRender {
     );
     // 建立关联
     gl.enableVertexAttribArray(attrOpt.index);
+  }
+
+  /**
+   * 加载2D纹理对象
+   */
+  create2DTexture(texOption: texImage2DOption, texParam?: TexParam) {
+    const gl = this.gl;
+    const { level, internalformat, width, height, type, imageSource } =
+      texOption;
+    // 创建纹理
+    const texTure = gl.createTexture();
+    const target = gl.TEXTURE_2D;
+    // 绑定纹理
+    gl.bindTexture(target, texTure);
+    // 指定二维纹理图像
+    const format = gl[internalformat];
+    if (width && height) {
+      gl.texImage2D(
+        target,
+        level,
+        format,
+        width,
+        height,
+        0,
+        format,
+        gl[type],
+        imageSource as ArrayBufferView
+      );
+    } else {
+      gl.texImage2D(
+        target,
+        level,
+        format,
+        format,
+        gl[type],
+        imageSource as TexImageSource
+      );
+    }
+    // 设置纹理参数
+    if (!texParam) {
+      return texTure;
+    }
+    const { mag_filter, min_filter, wrap_s, wrap_t } = texParam;
+    !Object.is(mag_filter, undefined) &&
+      gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl[mag_filter]);
+    !Object.is(min_filter, undefined) &&
+      gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl[min_filter]);
+    !Object.is(wrap_s, undefined) &&
+      gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl[wrap_s]);
+    !Object.is(wrap_t, undefined) &&
+      gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl[wrap_t]);
+    // gl.generateMipmap(target);
+    gl.bindTexture(target, null);
+    return texTure;
+  }
+
+  /**获取非2的幂纹理参数设置项 */
+  getTexParamNotPowerOf2(): TexParam {
+    return {
+      min_filter: TexParameter_Min_Filter.LINEAR,
+      wrap_s: TexParameter_Wrap_ST.CLAMP_TO_EDGE,
+      wrap_t: TexParameter_Wrap_ST.CLAMP_TO_EDGE,
+    };
   }
 }

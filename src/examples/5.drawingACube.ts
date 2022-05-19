@@ -45,7 +45,17 @@ export function drawingACube(radian: number) {
  * @param render 渲染器
  * @param program 着色器程序
  */
-function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+export function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+  // 顶点坐标
+  loadPositionBuffer(render, program);
+  // 顶点颜色
+  loadColorBuffer(render, program);
+  // 顶点索引
+  loadIndexBuffer(render);
+}
+
+/**顶点位置缓冲 */
+export function loadPositionBuffer(render: WebGLRender, program: WebGLProgram) {
   // 顶点(6个面，每个面四个顶点，以正方体中心为原点, 共计24个点, 实际8个点)
   const point_LBF = [
     WebGLCoordinate.X_L,
@@ -140,8 +150,10 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     },
     vertexAttrOpt
   );
+}
 
-  // 顶点颜色
+/**顶点颜色缓冲 */
+function loadColorBuffer(render: WebGLRender, program: WebGLProgram) {
   const faceColors = [
     [1.0, 1.0, 1.0, 1.0], // Front face: white
     [1.0, 0.0, 0.0, 1.0], // Back face: red
@@ -172,7 +184,10 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
     },
     colorAttrOpt
   );
+}
 
+/**顶点索引缓冲 */
+export function loadIndexBuffer(render: WebGLRender) {
   // 顶点索引(每个面需要使用到四个点，由两个三角形组成，每个三角形三个顶点，实际绘制时使用6个点)
   const vertexIndex: number[] = [];
   for (let i = 0; i < 6; i++) {
@@ -193,7 +208,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
  * 绘制
  * @param gl 绘图上下文
  */
-function draw(gl: WebGLRenderingContext) {
+export function draw(gl: WebGLRenderingContext) {
   const mode = gl[WebGLDrawType.TRIANGLE_STRIP]; // 绘制类型
   const type = gl[WebGLDrawElementType.UNSIGNED_SHORT]; // 缓冲类型
   const vertexCount = 36; // 顶点数量(6个面，每个面由两个三角形组成)

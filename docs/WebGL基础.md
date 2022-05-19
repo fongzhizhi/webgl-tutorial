@@ -284,9 +284,9 @@ export class WebGLRender {
 纹理数据的传递和顶点数据类似：
 
 - 创建纹理对象：`gl.createTexture()`
-- 设置纹理裁剪参数：`gl.texParameter[fi]()`
+- 设置纹理图像：`gl.texImage2D`，纹理图源类型为`TexImageSource`，具体包括：[`ArrayBufferView`](https://developer.mozilla.org/zh-CN/docs/Web/API/ArrayBufferView)、[`ImageData`](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageData)、[`HTMLImageElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLImageElement)、[`HTMLCanvasElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement)、[`HTMLVideoElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLVideoElement)、[`ImageBitmap`](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap)。
+- 设置纹理参数：`gl.texParameter[fi]()`
 - 绑定纹理对象：`gl.bindTexture(gl.TEXTURE_2D, texture)`
-- 设置纹理图像：纹理图源可以有很多类型，如 img、video、canvas 或 ImageBitMap，使用`gl.texImage2D`设置图像。
 
 ![img](../public/images/a3046b9a55f73687d2e3c1ba7ebfdd36.png)
 
@@ -559,6 +559,140 @@ export function drawingACube(radian: number) {
 ```
 
 ## 使用纹理贴图
+
+上文我们说过，数据传递的三种类型：
+
+- 顶点缓冲数据：使用`WebGLBuffer`传递顶点、颜色等数据。
+- 纹理数据：用于着色器读取贴图像素（纹素）。
+- `uniform`类型数据
+
+缓冲和`uniform`我们都使用过了，本节就来展开纹理的使用：在正方体的六个面展示同一个纹理。
+
+纹理的渲染和颜色的渲染本质上是没有差异的，在之前的案例中，我们通过赋予顶点颜色，然后通过内置变量`gl_FragColor`来顶点颜色，这样，顶点颜色值就能被片段着色器使用，进行单位像素的颜色渲染。
+
+而纹理实际上也是二维像素的有序组合（一张图片放大了看就是一个个的像素点），利用`GLSL`提供的内置函数`texture2D`，结合传递的纹理数据，片段着色器上就能从纹理图源中取出纹素进行渲染。
+
+所以，片段着色器进行颜色渲染的两种方式：
+
+- 通过顶点颜色进行渲染
+- 通过纹理进行渲染
+
+所以从本质出发，在案例 5 的基础上，我们需要进行如下改动：
+
+- 修改着色器源码：利用`texture2D`计算纹素赋值给`gl_FragColor`
+
+  片段着色器：
+
+  ```ts
+  const fs = `
+      varying lowp vec4 vTextureCoord;
+  
+      uniform sampler2D uSampler;
+  
+      void main() {
+          // 采集纹素(纹理像素值)
+          gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+      }
+  `;
+  ```
+
+  顶点着色器：
+
+  ```ts
+  const vs = `
+      attribute vec4 aVertexPosition;
+      attribute vec4 aTextureCoord;
+  
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+  
+      varying lowp vec4 vTextureCoord;
+  
+      void main() {
+          gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+          vTextureCoord = aTextureCoord;
+      }
+  `;
+  ```
+
+- 根据着色器源码新增属性：片段着色器中的`uSampler`, 顶点着色器中的`aTextureCoord`，更新对应的缓冲数据和纹理数据。
+
+  - 创建纹理
+
+    纹理的创建和缓冲的创建类似，这里我们直接用了主页的`logo`作为纹理图源：
+
+    ```ts
+    const imageSource: TexImageSource = $$("#logo") as HTMLImageElement;
+    const cubeTexTure = render.create2DTexture(
+      {
+        level: 0,
+        internalformat: TexImage2DInternalformat.RGBA,
+        type: TexImage2DTexelType.UNSIGNED_BYTE,
+        imageSource,
+      },
+      render.getTexParamNotPowerOf2()
+    );
+    ```
+
+    > 注意：值得注意的一点是对纹理的加载同样需要遵循[跨域访问规则](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Tutorial/zh-CN/docs/Web/HTTP/Access_control_CORS)；也就是说你只能从允许跨域访问的网址加载你需要的纹理。另外，在多数情况下，纹理的宽和高都必须是 2 的幂（如：1，2，4，8，16 等等），虽然非 2 的幂也支持，但使用时会有一些限制，比如不能用来生成多级渐进纹理，而且不能使用纹理重复（重复纹理寻址等）。如果有什么特殊情况请参考“[非 2 的幂纹理](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL#非2的幂纹理)”。
+
+  - 更新属性`aTextureCoord`：纹理坐标。
+
+    ```ts
+    const frantCoor = [0, 0, 1, 0, 1, 1, 0, 1]; // 每两个点为一个矩形四个点的取值范围坐标
+    const backCoor = frantCoor; // 这里六个面都设置一样的贴图
+    const topCoor = frantCoor;
+    const bottomCoor = frantCoor;
+    const rightCoor = frantCoor;
+    const leftCoor = frantCoor;
+    const textureCoordinates: number[] = [].concat(
+      frantCoor,
+      backCoor,
+      topCoor,
+      bottomCoor,
+      rightCoor,
+      leftCoor
+    );
+    render.createArrayBuffer(
+      {
+        data: new Float32Array(textureCoordinates),
+        usage: WebGLBufferUsage.STATIC_DRAW,
+      },
+      {
+        index: render.getAttribLocation(program, "aTextureCoord"),
+        size: 2,
+        type: WebGLVertexDataType.FLOAT,
+        normalized: false,
+        stride: 0,
+        offset: 0,
+      }
+    );
+    ```
+
+  - 更新`uniform`属性`uSampler`：采样器。指绑定的纹理单元。
+
+    ```ts
+    // 绑定纹理对象
+    const gl = render.gl;
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, cubeTexTure);
+    // 更新 uSampler 的值
+    const uSampleLoc = render.getUniformLocation(program, "uSampler");
+    gl.uniform1i(uSampleLoc, 0);
+    ```
+
+<span class="example" key="6">实例 6：在正方体上使用纹理贴图</span>
+
+```ts
+/**
+ * 在立方体表面使用贴图
+ */
+export function usingTextureOnCube() {
+  requestAnimationFrameDraw(drawingACube);
+}
+```
+
+**思考**：如何在不同的面使用不同的纹理贴图？
 
 ## 使用灯光
 

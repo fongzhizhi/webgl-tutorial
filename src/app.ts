@@ -6,6 +6,7 @@ import { marked } from "marked";
 import hljs from "highlight.js";
 import { $$ } from "./utils/xml";
 import { loadDocs } from "./utils/router";
+import { ExampleMap } from "./app/exampleMap";
 
 window.onload = async () => {
   init();
@@ -13,7 +14,8 @@ window.onload = async () => {
   // const path = 'README.MD';
   await loadDocs(path);
   canvasDraw();
-  showExample("5");
+  const keys = Object.keys(ExampleMap);
+  keys.length && showExample(keys[keys.length - 1]);
 };
 
 /**展示实例 */
