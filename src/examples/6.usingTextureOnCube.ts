@@ -46,19 +46,19 @@ export function drawingACube(radian: number) {
  */
 export function createProgram(render: WebGLRender) {
   const vs = `
-attribute vec4 aVertexPosition;
-attribute vec4 aTextureCoord;
+    attribute vec4 aVertexPosition;
+    attribute vec4 aTextureCoord;
 
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
 
-varying lowp vec4 vTextureCoord;
+    varying lowp vec4 vTextureCoord;
 
-void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    vTextureCoord = aTextureCoord;
-}
-`;
+    void main() {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        vTextureCoord = aTextureCoord;
+    }
+  `;
   const fs = `
     varying lowp vec4 vTextureCoord;
 
@@ -88,9 +88,13 @@ export function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
 }
 
 /**创建纹理贴图 */
-function loadTextureBuffer(render: WebGLRender, program: WebGLProgram) {
+export function loadTextureBuffer(
+  render: WebGLRender,
+  program: WebGLProgram,
+  imageSource?: TexImageSource
+) {
   // 加载纹理对象
-  const imageSource: TexImageSource = $$("#logo") as HTMLImageElement;
+  imageSource = imageSource || ($$("#logo") as HTMLImageElement);
   const cubeTexTure = render.create2DTexture(
     {
       level: 0,

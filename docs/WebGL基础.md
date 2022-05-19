@@ -808,6 +808,18 @@ export function usingLighting() {
 
 ## 动画纹理贴图
 
+...
+
+<span class="example" key="8">实例 8：使用动画作为纹理贴图</span>
+
+```ts
+export function usingVedioTextureOnCube() {
+  requestAnimationFrameDraw(drawingACube);
+}
+```
+
+> **举一隅而反三隅**：其他几种纹理图源类型如何使用？能否结合使用不同的纹理图源类型？
+
 ## 扩展阅读
 
 - [入门 WebGL，看这一篇就够了](https://xie.infoq.cn/article/511aa64f69530ed3061829351)

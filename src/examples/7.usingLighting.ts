@@ -44,31 +44,31 @@ export function drawingACube(radian: number) {
  */
 export function createProgram(render: WebGLRender) {
   const vs = `
-attribute vec4 aVertexPosition;
-attribute vec4 aTextureCoord;
-attribute vec3 aVertexNormal;
+    attribute vec4 aVertexPosition;
+    attribute vec4 aTextureCoord;
+    attribute vec3 aVertexNormal;
 
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-uniform mat4 uNormalMatrix;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    uniform mat4 uNormalMatrix;
 
-varying lowp vec4 vTextureCoord;
-varying highp vec3 vLighting;
+    varying lowp vec4 vTextureCoord;
+    varying highp vec3 vLighting;
 
-void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    vTextureCoord = aTextureCoord;
-    // 加入光照效果
-    highp vec3 ambientLight = vec3(0.2, 0.2, 0.2); // 环境光位置
-    highp vec3 directionalLightColor = vec3(1, 1, 1); // 方向光颜色
-    highp vec3 directionalVector = normalize(vec3(1,0,1)); // 方向关位置
-    
-    highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+    void main() {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        vTextureCoord = aTextureCoord;
+        // 加入光照效果
+        highp vec3 ambientLight = vec3(0.2, 0.2, 0.2); // 环境光位置
+        highp vec3 directionalLightColor = vec3(1, 1, 1); // 方向光颜色
+        highp vec3 directionalVector = normalize(vec3(1,0,1)); // 方向关位置
+        
+        highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
 
-    vLighting = ambientLight + (directionalLightColor * directional);
-}
-`;
+        vLighting = ambientLight + (directionalLightColor * directional);
+    }
+  `;
   const fs = `
     varying lowp vec4 vTextureCoord;
     varying highp vec3 vLighting;
@@ -76,12 +76,12 @@ void main() {
     uniform sampler2D uSampler;
     
     void main() {
-    // 纹素
-    highp vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-    // 片段颜色
-    gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+      // 纹素
+      highp vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+      // 片段颜色
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
     }
-`;
+  `;
   return render.createProgramBySource(vs, fs);
 }
 
