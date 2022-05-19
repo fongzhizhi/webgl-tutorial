@@ -808,7 +808,59 @@ export function usingLighting() {
 
 ## 动画纹理贴图
 
-...
+在案例 6 中，我们使用图片作为纹理贴图的图源，此外，[`ArrayBufferView`](https://developer.mozilla.org/zh-CN/docs/Web/API/ArrayBufferView)、[`ImageData`](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageData)、[`HTMLCanvasElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement)、[`HTMLVideoElement`](https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLVideoElement)、[`ImageBitmap`](https://developer.mozilla.org/zh-CN/docs/Web/API/ImageBitmap)均可作为图源，而`video`是视频源，也就是说，视频也可以作为贴图来展示，与图片的传值无差别，都是使用`gl.texImage2D`来绑定图源，不过，`video`作为图源传入时需要保证是播放状态，否则取视频作为图源时仍是画布静止那一帧的图像。
+
+所以我们在案例 6 的基础上，只需要把之前传入的`$$('#logo')`改为循环播放状态的`video`即可。
+
+下面是加载`vedio`标签的方法：
+
+```ts
+let video: HTMLVideoElement = null;
+let copyVideo = false;
+/**加载 Video */
+function loadVedio(url: string) {
+  if (video) {
+    return;
+  }
+  video = document.createElement("video");
+  // 自动静音循环播放
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+
+  // 状态监听
+  var playing = false;
+  var timeupdate = false;
+  video.addEventListener(
+    "playing",
+    function () {
+      playing = true;
+      checkReady();
+    },
+    true
+  );
+
+  video.addEventListener(
+    "timeupdate",
+    function () {
+      timeupdate = true;
+      checkReady();
+    },
+    true
+  );
+
+  video.src = url;
+  video.play();
+
+  function checkReady() {
+    if (playing && timeupdate) {
+      copyVideo = true;
+    }
+  }
+}
+```
+
+我们需要用两个全局变量来记录状态，当`copyVideo`为真时，说明`video`已处于循环播放状态，可作为图源传入。
 
 <span class="example" key="8">实例 8：使用动画作为纹理贴图</span>
 
