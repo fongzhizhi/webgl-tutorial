@@ -44,7 +44,7 @@ export function drawingACube(radian: number) {
 /**
  * 创建着色器程序
  */
-function createProgram(render: WebGLRender) {
+export function createProgram(render: WebGLRender) {
   const vs = `
 attribute vec4 aVertexPosition;
 attribute vec4 aTextureCoord;
@@ -135,7 +135,7 @@ function loadTextureBuffer(render: WebGLRender, program: WebGLProgram) {
 /**
  * 更新采样器 uSampler 的值
  */
-function loadUniform_uSampler(
+export function loadUniform_uSampler(
   render: WebGLRender,
   program: WebGLProgram,
   cubeTexTure: WebGLTexture

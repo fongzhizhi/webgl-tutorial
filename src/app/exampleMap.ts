@@ -4,6 +4,7 @@ import { drawingASquareOfColor } from "../examples/3.drawingASquareOfColor";
 import { drawingAAnimatingSquare } from "../examples/4.drawingAAnimatingSquare";
 import { drawingAAnimationCube } from "../examples/5.drawingACube";
 import { usingTextureOnCube } from "../examples/6.usingTextureOnCube";
+import { usingLighting } from "../examples/7.usingLighting";
 
 /**
  * 实例函数映射表
@@ -17,6 +18,7 @@ export const ExampleMap: {
   4: drawingAAnimatingSquare,
   5: drawingAAnimationCube,
   6: usingTextureOnCube,
+  7: usingLighting,
 };
 
 /**

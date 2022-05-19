@@ -11,14 +11,16 @@ export function drawingAAnimatingSquare() {
 /**
  * 按帧执行渲染函数
  * @param drawFun 绘制逻辑函数
+ * @param speed 旋转速度
  */
-export function requestAnimationFrameDraw(drawFun: (radian: number) => void) {
+export function requestAnimationFrameDraw(
+  drawFun: (radian: number) => void,
+  speed = 1.5
+) {
   /**上一刻 */
   let last = window.performance.now() / 1000;
   /**旋转弧度 */
   let radian = 0;
-  /**旋转速度 */
-  const speed = 2;
 
   /**
    * 帧渲染函数

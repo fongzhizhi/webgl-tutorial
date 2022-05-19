@@ -127,6 +127,10 @@ export function loadUniform(
   // 关联参数值
   gl.uniformMatrix4fv(projectionMatrixLoc, false, projectionMatrix);
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, modelViewMatrix);
+  return {
+    projectionMatrix,
+    modelViewMatrix,
+  };
 }
 
 /**

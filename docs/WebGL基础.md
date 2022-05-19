@@ -684,17 +684,127 @@ export function drawingACube(radian: number) {
 <span class="example" key="6">实例 6：在正方体上使用纹理贴图</span>
 
 ```ts
-/**
- * 在立方体表面使用贴图
- */
 export function usingTextureOnCube() {
   requestAnimationFrameDraw(drawingACube);
 }
 ```
 
-**思考**：如何在不同的面使用不同的纹理贴图？
+> **举一隅而反三隅**：如何在不同的面使用不同的纹理贴图？
 
 ## 使用灯光
+
+> 在使用灯光之前，首先我们需要了解，与定义更广泛的 OpenGL 不同，WebGL 并没有继承 OpenGL 中灯光的支持。所以你只能由自己完全得控制灯光。
+
+和纹理一样，灯光也是为了 3D 物体更贴近现实而做的处理，其本质仍然是通过修改片段着色器的像素颜色`gl_FragColor`来实现，这就相当于在不同的光源下作用下物体的表面颜色是不同的，为了实现光照参数对像素颜色的影响，有各种各样的光照模型，本节不再次深入展开，想了解更多相关知识可查阅维基百科中的 [Phong 着色法](https://zh.wikipedia.org/wiki/Phong著色法)，文章给出了不错的概要介绍，并介绍了最常用的几种光照模型。
+
+光源一般概括为三种类型：
+
+- **环境光**：是一种可以**渗透到场景的每一个角落**的光。它是非方向光并且会均匀地照射物体的每一个面，无论这个面是朝向哪个方向的。
+- **方向光**：是一束从一个固定的方向照射过来的光。这种光的特点可以理解为好像是从一个很遥远的地方照射过来的，然后光线中的每一个光子与其它光子都是**平行运动**的。比如现实中的太阳光。
+- **点光源光**：是指光线是从一个点发射出来的，是向着**四面八方发射**的。这种光在我们的现实生活中是最常被用到的。比如现实中的灯光。
+
+当然，光照模型除了考虑光源和方向，还需要考虑反射光等情况，模型越复杂，模拟当然越逼真，但计算也就越复杂。在本案例中，我们不深入相关光照模型的细节，只考虑简单的方向光和环境光，简单了解其工作原理即可：
+
+- 需要在每个顶点信息中加入面的**朝向法线**。这个法线是一个垂直于这个顶点所在平面的向量。
+
+- 需要明确方向光的传播方向，可以使用一个**方向向量**来定义。
+
+回到之前的案例，我们在带贴图的旋转立方体的案例上，增加光照的效果，我们从着色器程序的实现出发，做出如下修改：
+
+- 修改着色器程序：加入光照效果对像素颜色的影响
+
+  首先是片段着色器：
+
+  ```ts
+  const fs = `
+      varying lowp vec4 vTextureCoord;
+      varying highp vec3 vLighting;
+  
+      uniform sampler2D uSampler;
+      
+      void main() {
+      // 纹素
+      highp vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+      // 片段颜色
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+      }
+  `;
+  ```
+
+  引入了`vLighting`变量以表示灯光效果对像素颜色的影响，该值需要从顶点着色器传入。
+
+  然后是顶点着色器，计算`vLighting`：
+
+  ```ts
+  const vs = `
+      attribute vec4 aVertexPosition;
+      attribute vec4 aTextureCoord;
+      attribute vec3 aVertexNormal;
+  
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+      uniform mat4 uNormalMatrix;
+  
+      varying lowp vec4 vTextureCoord;
+      varying highp vec3 vLighting;
+  
+      void main() {
+          gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+          vTextureCoord = aTextureCoord;
+          // 加入光照效果
+          highp vec3 ambientLight = vec3(0.2, 0.2, 0.2); // 环境光位置
+          highp vec3 directionalLightColor = vec3(1, 1, 1); // 方向光颜色
+          highp vec3 directionalVector = normalize(vec3(1,0,1)); // 方向关位置
+  
+          highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+          highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+  
+          vLighting = ambientLight + (directionalLightColor * directional);
+      }
+  `;
+  ```
+
+  为了计算`vLighting`的叠加效果，有一些列的计算过程，此处不展开讨论，读者可自行查阅相关光照模型。
+
+- 根据着色器程序扩展的属性，更新相关缓冲数据
+
+  顶点着色器增加了顶点法向量(aVertexNormal)和法线矩阵(uNormalMatrix)两个属性。
+
+  顶点法向量(aVertexNormal)：
+
+  ```ts
+  const front = [0, 0, 1];
+  const back = [0, 0, -1];
+  const top = [0, 1, 0];
+  const bottom = [0, -1, 0];
+  const right = [1, 0, 0];
+  const left = [-1, 0, 0];
+  // 顶点法向量
+  const vertextNormals: number[] = [];
+  [front, back, top, bottom, right, left].forEach((face) => {
+    for (let i = 0; i < 4; i++) {
+      vertextNormals.push(...face);
+    }
+  });
+  ```
+
+  法线矩阵：受`modelViewMatrix`的影响：
+
+  ```ts
+  const normalMatrix = mat4.create();
+  mat4.invert(normalMatrix, modelViewMatrix);
+  mat4.transpose(normalMatrix, normalMatrix);
+  ```
+
+<span class="example" key="7">实例 7：使用灯光</span>
+
+```ts
+export function usingLighting() {
+  requestAnimationFrameDraw(drawingACube);
+}
+```
+
+> **举一隅而反三隅**：如何定义光源方向？如果修改光源颜色？多个光源的叠加效果如何实现？
 
 ## 动画纹理贴图
 
