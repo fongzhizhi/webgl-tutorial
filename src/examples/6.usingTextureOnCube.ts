@@ -20,7 +20,10 @@ export function usingTextureOnCube() {
 /**
  * 绘制一个立方体
  */
-export function drawingACube(radian: number) {
+export function drawingACube(
+  radian: number,
+  imageSource?: TexImageSource | ArrayBufferView
+) {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -29,7 +32,7 @@ export function drawingACube(radian: number) {
   // 创建着色器程序
   const program = createProgram(render);
   // 创建顶点缓冲并关联顶点属性
-  const cubeTexTure = loadVertexBuffer(render, program);
+  const cubeTexTure = loadVertexBuffer(render, program, imageSource);
   // 开启渲染状态，传递 uniform  变量
   loadUniform(render, program, {
     y: radian * 0.8,
@@ -77,11 +80,15 @@ export function createProgram(render: WebGLRender) {
  * @param render 渲染器
  * @param program 着色器程序
  */
-export function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+export function loadVertexBuffer(
+  render: WebGLRender,
+  program: WebGLProgram,
+  imageSource?: TexImageSource | ArrayBufferView
+) {
   // 顶点坐标
   loadPositionBuffer(render, program);
   // 贴图
-  const cubeTexTure = loadTextureBuffer(render, program);
+  const cubeTexTure = loadTextureBuffer(render, program, imageSource);
   // 顶点索引
   loadIndexBuffer(render);
   return cubeTexTure;
@@ -91,7 +98,7 @@ export function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
 export function loadTextureBuffer(
   render: WebGLRender,
   program: WebGLProgram,
-  imageSource?: TexImageSource
+  imageSource?: TexImageSource | ArrayBufferView | ArrayBufferView
 ) {
   // 加载纹理对象
   imageSource = imageSource || ($$("#logo") as HTMLImageElement);

@@ -15,7 +15,9 @@ window.onload = async () => {
   await loadDocs(path);
   canvasDraw();
   const keys = Object.keys(ExampleMap);
-  keys.length && showExample(keys[keys.length - 1]);
+  setTimeout(() => {
+    keys.length && showExample(keys[keys.length - 1]);
+  }, 600);
 };
 
 /**展示实例 */

@@ -29,7 +29,7 @@ export function drawingASquare() {
 
 /**初始化画布状态 */
 export function initCanvas(gl: WebGLRenderingContext) {
-  gl.clearColor(0, 0, 0, 1); // 使用完全不透明的黑色清除所有图像
+  gl.clearColor(0.3, 0.3, 0.3, 1); // 使用完全不透明的灰色清除所有图像
   gl.clearDepth(1); // 清空所有图元
   gl.enable(gl.DEPTH_TEST); // 启用深度测试
   gl.depthFunc(gl.LEQUAL); // 指定深度比较函数

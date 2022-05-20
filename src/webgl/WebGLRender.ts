@@ -203,13 +203,13 @@ export class WebGLRender {
     gl.bindTexture(target, texTure);
     // 指定二维纹理图像
     const format = gl[internalformat];
-    if (width && height) {
+    if (imageSource["buffer"]) {
       gl.texImage2D(
         target,
         level,
         format,
-        width,
-        height,
+        width || 1,
+        height || 1,
         0,
         format,
         gl[type],

@@ -17,7 +17,10 @@ export function usingLighting() {
 /**
  * 绘制一个具有灯光效果的正方体
  */
-export function drawingACube(radian: number) {
+export function drawingACube(
+  radian: number,
+  imageSource?: TexImageSource | ArrayBufferView
+) {
   // 构建渲染器
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   const gl = render.gl;
@@ -26,7 +29,7 @@ export function drawingACube(radian: number) {
   // 创建着色器程序
   const program = createProgram(render);
   // 更新缓冲数据
-  const cubeTexTure = loadVertexBuffer(render, program);
+  const cubeTexTure = loadVertexBuffer(render, program, imageSource);
   loadVertexBuffer_aVertexNormal(render, program);
   // 更新uniform属性值
   const uniformInfo = loadUniform(render, program, {

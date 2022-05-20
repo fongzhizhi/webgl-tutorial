@@ -36,7 +36,7 @@ export function exampleEventInit() {
       const keyBackBtn = $$(keyBackBtnSelector);
       keyBackBtn.setAttribute("key", key);
       keyBackBtn.innerHTML = "实例" + key;
-      $$("#glcanvas").scrollIntoView({
+      $$("#canvas").scrollIntoView({
         behavior: "smooth",
       });
       cancelAnimationFrame(DrawAnimationFrame.index); // 清除之前使用过的动画绘制
