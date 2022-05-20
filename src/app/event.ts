@@ -20,9 +20,10 @@ export function exampleEventInit() {
 
   /**实例列表面板 */
   const listPanel = $$("#example-list");
-  if (!listPanel) {
+  if (!listPanel || !listHtml) {
     return;
   }
+  $$("#canvas .examples").classList.remove("hidden");
   listPanel.innerHTML = listHtml;
   $$$("li", listPanel).forEach((el) => {
     el.addEventListener("click", clickEvent);

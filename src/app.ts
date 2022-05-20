@@ -10,20 +10,24 @@ import { ExampleMap } from "./app/exampleMap";
 
 window.onload = async () => {
   init();
-  const path = "docs/WebGL基础.md";
+  const path = "docs/WebGL进阶.md";
   // const path = 'README.MD';
   await loadDocs(path);
   canvasDraw();
   const keys = Object.keys(ExampleMap);
   setTimeout(() => {
     keys.length && showExample(keys[keys.length - 1]);
-  }, 600);
+  });
 };
 
 /**展示实例 */
 function showExample(key: string) {
   const el = $$(`[key="${key}"].example`) as HTMLElement;
-  el && el.click();
+  if (el) {
+    el.click();
+  } else {
+    ExampleMap[8].call(this);
+  }
 }
 
 /**
