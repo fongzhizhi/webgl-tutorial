@@ -40,7 +40,71 @@ WebGL 空间中的点和多边形的个体转化由基本的转换矩阵（例�
 
 ### 裁剪空间案例
 
+#### 矩形框绘制器`BBoxDrawer`
+
 为了更直观地感受裁剪空间的“裁剪”效果，我们故意绘制一些超出裁剪空间范围的矩阵来测试效果。
+
+首先我们封装一个专门用于绘制矩形的类`BBoxDrawer`，类似这样：
+
+```ts
+/**矩形框信息 */
+export interface BBoxInfo {
+  /**上 */
+  top: number;
+  /**下 */
+  bottom: number;
+  /**左 */
+  left: number;
+  /**右 */
+  right: number;
+  /**深度(z) */
+  depth: number;
+  /**rgb色值 */
+  color: [number, number, number, number];
+}
+
+/**
+ * 矩形框绘制器
+ */
+export class BBoxDrawer {
+  /**渲染器 */
+  private readonly render: WebGLRender;
+
+  /**
+   * WebGL渲染器
+   * @param canvas canvas元素
+   * @param gl_attributes webgl上下文属性
+   */
+  constructor(
+    canvas: HTMLCanvasElement,
+    gl_attributes?: WebGLContextAttributes
+  ) {
+    this.render = new WebGLRender(canvas, gl_attributes);
+  }
+
+  /**
+   * 绘制
+   */
+  draw(bboxInfo: BBoxInfo) {
+    // 1.创建着色器程序
+    // 2.绑定缓冲数据
+    // 3.更新uniform属性
+    // 4.执行绘制
+  }
+}
+```
+
+当我们每调用一次`draw`并设置相应的矩形框参数，就会在对应的画布上渲染出一个矩形。
+
+> 注意，为了简化分析过程，我们直接使用裁剪空间坐标作为传入参数，这样，就不需要进行额外的空间坐标系转换，
+
+#### 创建着色器程序
+
+#### 绑定缓冲数据
+
+#### 更新 uniform 属性
+
+#### 执行绘制
 
 ### 齐次坐标
 
