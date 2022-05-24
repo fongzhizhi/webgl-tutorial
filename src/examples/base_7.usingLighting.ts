@@ -2,10 +2,13 @@ import { mat4 } from "gl-matrix";
 import { $$ } from "../utils/xml";
 import { WebGLBufferUsage, WebGLVertexDataType } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./2.drawingASquare";
-import { requestAnimationFrameDraw } from "./4.drawingAAnimatingSquare";
-import { draw } from "./5.drawingACube";
-import { loadUniform_uSampler, loadVertexBuffer } from "./6.usingTextureOnCube";
+import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
+import { draw } from "./base_5.drawingACube";
+import {
+  loadUniform_uSampler,
+  loadVertexBuffer,
+} from "./base_6.usingTextureOnCube";
 
 /**
  * 使用灯光

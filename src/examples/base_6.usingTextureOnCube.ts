@@ -6,9 +6,13 @@ import {
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./2.drawingASquare";
-import { requestAnimationFrameDraw } from "./4.drawingAAnimatingSquare";
-import { draw, loadIndexBuffer, loadPositionBuffer } from "./5.drawingACube";
+import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
+import {
+  draw,
+  loadIndexBuffer,
+  loadPositionBuffer,
+} from "./base_5.drawingACube";
 
 /**
  * 在立方体表面使用贴图

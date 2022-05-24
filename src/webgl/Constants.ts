@@ -12,11 +12,11 @@ export enum WebGLShaderType {
  * 缓冲的用途
  */
 export enum WebGLBufferUsage {
-  /**常用但不常改 */
+  /**常用但不常改(~只读) */
   STATIC_DRAW = "STATIC_DRAW",
-  /**常用且常改 */
+  /**常用且常改(~读写) */
   DYNAMIC_DRAW = "DYNAMIC_DRAW",
-  /**不常用 */
+  /**不常用(~临时) */
   STREAM_DRAW = "STREAM_DRAW",
 }
 
@@ -35,7 +35,7 @@ export enum WebGLBufferType {
  * 缓冲参数
  */
 export type BufferOption = Partial<{
-  /**尺寸 */
+  /**数据空间大小(设置了data则无需指定) */
   size: number;
   /**数据 */
   data: BufferSource;

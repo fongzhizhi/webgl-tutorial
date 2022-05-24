@@ -1,30 +1,32 @@
-import { getWebGLContext } from "../examples/1.webglContext";
-import { drawingASquare } from "../examples/2.drawingASquare";
-import { drawingASquareOfColor } from "../examples/3.drawingASquareOfColor";
-import { drawingAAnimatingSquare } from "../examples/4.drawingAAnimatingSquare";
-import { drawingAAnimationCube } from "../examples/5.drawingACube";
-import { usingTextureOnCube } from "../examples/6.usingTextureOnCube";
-import { usingLighting } from "../examples/7.usingLighting";
-import { usingVedioTextureOnCube } from "../examples/8.usingVedioTextureOnCube";
+import { drawBBoxs } from "../examples/advance_1.bboxDrawer";
+import { getWebGLContext } from "../examples/base_1.webglContext";
+import { drawingASquare } from "../examples/base_2.drawingASquare";
+import { drawingASquareOfColor } from "../examples/base_3.drawingASquareOfColor";
+import { drawingAAnimatingSquare } from "../examples/base_4.drawingAAnimatingSquare";
+import { drawingAAnimationCube } from "../examples/base_5.drawingACube";
+import { usingTextureOnCube } from "../examples/base_6.usingTextureOnCube";
+import { usingLighting } from "../examples/base_7.usingLighting";
+import { usingVedioTextureOnCube } from "../examples/base_8.usingVedioTextureOnCube";
 
 /**
- * 实例函数映射表
+ * 示例函数映射表
  */
 export const ExampleMap: {
   [key: string]: () => void;
 } = {
-  1: getWebGLContext,
-  2: drawingASquare,
-  3: drawingASquareOfColor,
-  4: drawingAAnimatingSquare,
-  5: drawingAAnimationCube,
-  6: usingTextureOnCube,
-  7: usingLighting,
-  8: usingVedioTextureOnCube,
+  base_1: getWebGLContext,
+  base_2: drawingASquare,
+  base_3: drawingASquareOfColor,
+  base_4: drawingAAnimatingSquare,
+  base_5: drawingAAnimationCube,
+  base_6: usingTextureOnCube,
+  base_7: usingLighting,
+  base_8: usingVedioTextureOnCube,
+  advance_1: drawBBoxs,
 };
 
 /**
- * 返回实例回调函数
+ * 返回示例回调函数
  */
 export function getExampleCall(key: string) {
   return ExampleMap[key] || null;

@@ -1,5 +1,5 @@
-import { requestAnimationFrameDraw } from "./4.drawingAAnimatingSquare";
-import { drawingACube } from "./7.usingLighting";
+import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
+import { drawingACube } from "./base_7.usingLighting";
 
 let video: HTMLVideoElement = null;
 let copyVideo = false;

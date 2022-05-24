@@ -9,9 +9,9 @@ import {
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./2.drawingASquare";
-import { createProgram } from "./3.drawingASquareOfColor";
-import { requestAnimationFrameDraw } from "./4.drawingAAnimatingSquare";
+import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { createProgram } from "./base_3.drawingASquareOfColor";
+import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
 
 /**绘制动态立方体 */
 export function drawingAAnimationCube() {

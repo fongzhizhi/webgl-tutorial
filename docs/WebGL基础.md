@@ -17,7 +17,7 @@
 
 如果返回 null，则说明执行脚本的浏览器环境不支持该类型的渲染上下文。
 
-<span class="example" key="1">实例 1：获取绘图上下文</span>：
+<span class="example" key="base_1">示例 1：获取绘图上下文</span>：
 
 ```ts
 /**
@@ -306,7 +306,7 @@ export class WebGLRender {
 - 进入渲染状态，传递`uniform`类型值
 - 渲染（绘制）画布
 
-<span class="example" key="2">实例 2：绘制一个正方形</span>
+<span class="example" key="base_2">示例 2：绘制一个正方形</span>
 
 ```ts
 /**
@@ -375,7 +375,7 @@ export function drawingASquare() {
   `;
   ```
 
-修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`，<span class="example" key="3">实例 3：绘制一个带颜色的正方形</span>
+修改好了源码，我们只需要把**颜色缓冲**数据传递给`aVertexColor`属性即可，这和把**位置缓冲**传递给`aVertexPosition`属性的做法是一致的，所以我们只需要修改一下`loadVertexBuffer`，<span class="example" key="base_3">示例 3：绘制一个带颜色的正方形</span>
 
 ```ts
 function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
@@ -428,7 +428,7 @@ mat4.rotate(modelViewMatrix, modelViewMatrix, radian, [0, 0, 1]); // 绕z轴旋�
 
 这里，我们需要不断更新`radian`的值来更新`modelViewMatrix`属性的值，就能让正方形动起来。
 
-”不断更新“这一操作可以利用`requestAnimationFrame`来实现，而`radian`的值只需要随时间自动变化即可，<span class="example" key="4">实例 4：绘制一个运动的正方形</span>
+”不断更新“这一操作可以利用`requestAnimationFrame`来实现，而`radian`的值只需要随时间自动变化即可，<span class="example" key="base_4">示例 4：绘制一个运动的正方形</span>
 
 ```ts
 /**
@@ -535,7 +535,7 @@ function draw(gl: WebGLRenderingContext) {
   }
   ```
 
-<span class="example" key="5">实例 5：绘制一个正方体</span>（以下代码除了`loadVertexBuffer`的缓冲数据与正方形有差异，其余代码无差别）
+<span class="example" key="base_5">示例 5：绘制一个正方体</span>（以下代码除了`loadVertexBuffer`的缓冲数据与正方形有差异，其余代码无差别）
 
 ```ts
 export function drawingACube(radian: number) {
@@ -681,7 +681,7 @@ export function drawingACube(radian: number) {
     gl.uniform1i(uSampleLoc, 0);
     ```
 
-<span class="example" key="6">实例 6：在正方体上使用纹理贴图</span>
+<span class="example" key="base_6">示例 6：在正方体上使用纹理贴图</span>
 
 ```ts
 export function usingTextureOnCube() {
@@ -796,7 +796,7 @@ export function usingTextureOnCube() {
   mat4.transpose(normalMatrix, normalMatrix);
   ```
 
-<span class="example" key="7">实例 7：使用灯光</span>
+<span class="example" key="base_7">示例 7：使用灯光</span>
 
 ```ts
 export function usingLighting() {
@@ -862,7 +862,7 @@ function loadVedio(url: string) {
 
 我们需要用两个全局变量来记录状态，当`copyVideo`为真时，说明`video`已处于循环播放状态，可作为图源传入。
 
-<span class="example" key="8">实例 8：使用动画作为纹理贴图</span>
+<span class="example" key="base_8">示例 8：使用动画作为纹理贴图</span>
 
 ```ts
 export function usingVedioTextureOnCube() {

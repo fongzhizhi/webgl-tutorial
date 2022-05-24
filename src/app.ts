@@ -20,13 +20,13 @@ window.onload = async () => {
   });
 };
 
-/**展示实例 */
+/**展示示例 */
 function showExample(key: string) {
   const el = $$(`[key="${key}"].example`) as HTMLElement;
   if (el) {
     el.click();
   } else {
-    ExampleMap[8].call(this);
+    ExampleMap["base_8"].call(this);
   }
 }
 

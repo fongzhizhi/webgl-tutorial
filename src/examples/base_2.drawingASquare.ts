@@ -1,4 +1,4 @@
-import { mat4, ReadonlyVec3 } from "gl-matrix";
+import { mat4 } from "gl-matrix";
 import { $$ } from "../utils/xml";
 import {
   VertexAttrOption,

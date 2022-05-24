@@ -1,5 +1,5 @@
 import { DrawAnimationFrame } from "../app/public";
-import { drawingASquareOfColor } from "./3.drawingASquareOfColor";
+import { drawingASquareOfColor } from "./base_3.drawingASquareOfColor";
 
 /**
  * 绘制一个运动的正方形

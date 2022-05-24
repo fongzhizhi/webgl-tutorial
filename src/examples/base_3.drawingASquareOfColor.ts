@@ -5,7 +5,7 @@ import {
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, draw, loadUniform } from "./2.drawingASquare";
+import { initCanvas, draw, loadUniform } from "./base_2.drawingASquare";
 
 /**
  * 绘制一个带颜色的正方形

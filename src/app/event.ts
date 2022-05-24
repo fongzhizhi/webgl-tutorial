@@ -3,11 +3,11 @@ import { $$, $$$ } from "../utils/xml";
 import { getExampleCall } from "./exampleMap";
 import { DrawAnimationFrame } from "./public";
 
-/**实例返回按钮选择器 */
+/**示例返回按钮选择器 */
 const keyBackBtnSelector = "#canvas .info .key";
 
 /**
- * 实例按钮事件初始化
+ * 示例按钮事件初始化
  */
 export function exampleEventInit() {
   let listHtml = "";
@@ -18,7 +18,7 @@ export function exampleEventInit() {
     listHtml += `<li key="${key}">${el.innerHTML}</li>`;
   });
 
-  /**实例列表面板 */
+  /**示例列表面板 */
   const listPanel = $$("#example-list");
   if (!listPanel || !listHtml) {
     return;
@@ -36,7 +36,7 @@ export function exampleEventInit() {
     if (typeof fun === "function") {
       const keyBackBtn = $$(keyBackBtnSelector);
       keyBackBtn.setAttribute("key", key);
-      keyBackBtn.innerHTML = "实例" + key;
+      keyBackBtn.innerHTML = "示例" + key.replace(/.+_/, "");
       $$("#canvas").scrollIntoView({
         behavior: "smooth",
       });
@@ -46,14 +46,14 @@ export function exampleEventInit() {
       }, 200);
     } else {
       alert(
-        `未找到实例${key}的回调函数, 请在 src/app/exampleMap.ts 中配置映射表 ExampleMap`
+        `未找到示例${key}的回调函数, 请在 src/app/exampleMap.ts 中配置映射表 ExampleMap`
       );
     }
   }
 }
 
 /**
- * 实例返回按钮事件初始化
+ * 示例返回按钮事件初始化
  */
 export function exampleBackBtnEventInit() {
   $$(keyBackBtnSelector).addEventListener("click", (e) => {
