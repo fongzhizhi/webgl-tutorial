@@ -10,8 +10,8 @@ import { ExampleMap } from "./app/exampleMap";
 
 window.onload = async () => {
   init();
-  const path = "docs/WebGL进阶.md";
-  // const path = 'README.MD';
+  // const path = "docs/WebGL进阶.md";
+  const path = "README.MD";
   await loadDocs(path);
   canvasDraw();
   const keys = Object.keys(ExampleMap);
