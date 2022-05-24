@@ -5,19 +5,15 @@ import "highlight.js/styles/vs.css";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { $$ } from "./utils/xml";
-import { loadDocs } from "./utils/router";
 import { ExampleMap } from "./app/exampleMap";
+import { historyEventInit } from "./app/event";
+import { loadDocByUrl } from "./utils/router";
 
 window.onload = async () => {
   init();
-  // const path = "docs/WebGL进阶.md";
-  const path = "README.MD";
-  await loadDocs(path);
+  await loadDocByUrl();
   canvasDraw();
-  const keys = Object.keys(ExampleMap);
-  setTimeout(() => {
-    keys.length && showExample(keys[keys.length - 1]);
-  });
+  showExample("");
 };
 
 /**展示示例 */
@@ -34,6 +30,7 @@ function showExample(key: string) {
  * 相关初始化
  */
 function init() {
+  historyEventInit();
   initMarked();
 }
 

@@ -3,7 +3,7 @@
  */
 export enum RouterMap {
   /**首页 */
-  "Index" = "",
+  "Index" = "index",
   /**基础教程 */
   "Base" = "base",
   /**进阶教程 */

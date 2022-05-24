@@ -16,9 +16,21 @@ function server() {
 
   const port = 3030;
   app.use(express.static("dest"));
-  app.get("/docs/:path", (req, res) => {
+
+  const RouterMap = {
+    "": "README.MD",
+    index: "README.MD",
+    base: "docs/WebGL基础.md",
+    advance: "docs/WebGL进阶.md",
+    examples: "docs/WebGL案例.md",
+  };
+  app.get("/:path", (req, res) => {
     const path = req.params.path;
-    const filePath = _path.resolve(__dirname, path.replace(/__/g, "/"));
+    console.log("[get]", path);
+    const filePath = _path.resolve(
+      __dirname,
+      RouterMap[path] || RouterMap.index
+    );
     res.send(fs.readFileSync(filePath, "utf-8"));
   });
   app.listen(port, () => {

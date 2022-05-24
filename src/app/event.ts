@@ -1,4 +1,4 @@
-import { loadDocs } from "../utils/router";
+import { loadDocByUrl } from "../utils/router";
 import { $$, $$$ } from "../utils/xml";
 import { getExampleCall } from "./exampleMap";
 import { DrawAnimationFrame } from "./public";
@@ -77,10 +77,18 @@ export function pathAnchorEventInit() {
 
   /**点击事件 */
   async function clickEvent(e: Event) {
-    const target = (e.target as Element).getAttribute("path");
-    target && loadDocs(target);
+    const url = (e.target as Element).getAttribute("path");
+    history.pushState("", "", url);
+    history.go();
     e.preventDefault();
   }
+}
+
+/**
+ * 历史记录监听
+ */
+export function historyEventInit() {
+  window.addEventListener("popstate", loadDocByUrl);
 }
 
 /**
