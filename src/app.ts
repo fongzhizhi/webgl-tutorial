@@ -6,12 +6,13 @@ import { marked } from "marked";
 import hljs from "highlight.js";
 import { $$ } from "./utils/xml";
 import { ExampleMap } from "./app/exampleMap";
-import { historyEventInit } from "./app/event";
+import { historyEventInit, tocPanelEventInit } from "./app/event";
 import { loadDocByUrl } from "./utils/router";
 
 window.onload = async () => {
   init();
   await loadDocByUrl();
+  tocPanelEventInit();
   canvasDraw();
   showExample("");
 };

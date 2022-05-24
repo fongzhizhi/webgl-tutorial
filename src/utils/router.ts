@@ -1,6 +1,6 @@
 import axios from "axios";
 import { marked } from "marked";
-import { initEvent } from "../app/event";
+import { eventInit } from "../app/event";
 import { RouterMap } from "../app/router";
 import { printStyleLog } from "./util";
 
@@ -15,7 +15,7 @@ export async function loadDocs(path?: RouterMap) {
       if (res && res.data) {
         const docsHtml = marked(res.data, {});
         document.getElementById("docs").innerHTML = docsHtml;
-        initEvent();
+        eventInit();
       }
     })
     .catch((err) => {

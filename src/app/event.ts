@@ -1,5 +1,5 @@
 import { loadDocByUrl } from "../utils/router";
-import { $$, $$$ } from "../utils/xml";
+import { $$, $$$, getHeadings } from "../utils/xml";
 import { getExampleCall } from "./exampleMap";
 import { DrawAnimationFrame } from "./public";
 
@@ -92,11 +92,23 @@ export function historyEventInit() {
 }
 
 /**
- * 初始化事件
+ * 目录面板初始化
+ */
+export function tocPanelEventInit() {
+  const tocMap = getHeadings($$("#docs"), 2);
+  if (!tocMap) {
+    return;
+  }
+  console.log("=====>topMap", tocMap);
+}
+
+/**
+ * 事件初始化
  * @description 画布刷新时需要调用
  */
-export function initEvent() {
+export function eventInit() {
   exampleEventInit();
   exampleBackBtnEventInit();
   pathAnchorEventInit();
+  tocPanelEventInit();
 }
