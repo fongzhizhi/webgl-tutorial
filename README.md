@@ -4,9 +4,9 @@
 
 本教程将按照以下内容逐一展开：
 
-- <a href="#" path="base">WebGL 基础</a>
-- <a href="#" path="advance">WebGL 进阶</a>
-- <a href="#" path="examples">WebGL 案例</a>
+- <a href="./docs/WebGL基础.md" path="base">WebGL 基础</a>
+- <a href="./docs/WebGL进阶.md" path="advance">WebGL 进阶</a>
+- <a href="./docs/WebGL案例.md" path="examples">WebGL 案例</a>
 
 ## 资源
 
