@@ -12,7 +12,6 @@ import { loadDocByUrl } from "./utils/router";
 window.onload = async () => {
   init();
   await loadDocByUrl();
-  tocPanelEventInit();
   canvasDraw();
   showExample("");
 };

@@ -37,3 +37,20 @@ export function cssObj2CssStr(cssObj: { [k: string]: string }) {
   }
   return str;
 }
+
+/**
+ * 函数防抖
+ * @param fn 目标函数
+ * @param delay 延迟(ms)
+ */
+export function debounce<T>(fn: (...as: T[]) => void, delay = 72) {
+  let timer: NodeJS.Timeout = null;
+  return function (...args: T[]) {
+    if (timer != null) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}

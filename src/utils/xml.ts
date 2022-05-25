@@ -48,7 +48,7 @@ export function getHeadings(
   headings.forEach((h) => {
     const level = +h.tagName[1];
     const toc: TocMap = {
-      text: (h.innerHTML || "").trim(),
+      text: (h.id || h.innerHTML || "").trim(),
       level,
     };
     if (superTocHeap.length === 0) {
@@ -78,4 +78,31 @@ export function getHeadings(
   });
 
   return tocMaps;
+}
+
+/**
+ * 判断元素是否处于视野内
+ * @param el 元素
+ */
+export function isInViewPort(el: HTMLElement) {
+  // viewPortHeight 兼容所有浏览器写法
+  const viewPortHeight =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    document.body.clientHeight;
+  const top = getElementViewTop(el);
+  return top <= viewPortHeight && top > 0;
+}
+
+/**
+ * 获取元素的视野高度
+ * @param el 元素
+ */
+export function getElementViewTop(el: HTMLElement) {
+  if (!el) {
+    return NaN;
+  }
+  const scrollTop = document.documentElement.scrollTop;
+  const viewTop = el.offsetTop - scrollTop;
+  return viewTop;
 }

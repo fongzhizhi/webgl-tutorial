@@ -1,5 +1,6 @@
 import { loadDocByUrl } from "../utils/router";
-import { $$, $$$, getHeadings } from "../utils/xml";
+import { debounce } from "../utils/util";
+import { $$, $$$, getHeadings, getElementViewTop, TocMap } from "../utils/xml";
 import { getExampleCall } from "./exampleMap";
 import { DrawAnimationFrame } from "./public";
 
@@ -95,11 +96,82 @@ export function historyEventInit() {
  * 目录面板初始化
  */
 export function tocPanelEventInit() {
-  const tocMap = getHeadings($$("#docs"), 2);
+  // 获取标题目录
+  const tocMap = getHeadings($$("#docs"), 2, 3);
   if (!tocMap) {
     return;
   }
-  console.log("=====>topMap", tocMap);
+  // 创建目录面板
+  let tocHtml = "";
+  let minLevel = 6;
+  const anchors: string[] = [];
+  tocMap.forEach((item) => {
+    minLevel = Math.min(minLevel, item.level);
+  });
+  tocMap.forEach((item) => {
+    tocHtml = getTocHtml(item, minLevel, tocHtml, anchors);
+  });
+  tocHtml = `<div class="toc"><ul>${tocHtml}</ul></div>`;
+  // 生成面板
+  const tocFragment = document.createRange().createContextualFragment(tocHtml);
+  const parent = $$("#app");
+  parent.appendChild(tocFragment);
+  // 滚动面板
+  document.addEventListener(
+    "scroll",
+    debounce((e) => {
+      const activeCls = "active";
+      let lastView = -1;
+      let i = 0;
+      for (const a of anchors) {
+        const viewTop = getElementViewTop($$("#" + a) as HTMLElement);
+        if (viewTop <= 1) {
+          // 已经滚过视野
+          lastView = i;
+        } else {
+          break;
+        }
+        i++;
+      }
+      $$(`.toc li.${activeCls}`)?.classList.remove(activeCls);
+      if (lastView >= -1) {
+        $$(`.toc li[target="${anchors[lastView]}"]`, parent)?.classList.add(
+          activeCls
+        );
+      }
+    })
+  );
+
+  /**获取目录html */
+  function getTocHtml(
+    toc: TocMap,
+    minLevel: number,
+    tocHtml: string,
+    anchors: string[]
+  ) {
+    const anchor = getAnchorStr(toc.text);
+    anchors.push(anchor);
+    /**缩进 */
+    const tuckunderHtml = '<span class="tuckunder"></span>';
+    const titleSpan = `<span class="title" title="${toc.text}"><a href="#${anchor}">${toc.text}</a></span>`;
+    let tuckunders = "";
+    const tuckunderIndex = toc.level - minLevel;
+    for (let i = 0; i < tuckunderIndex; i++) {
+      tuckunders += tuckunderHtml;
+    }
+    tocHtml += `<li target="${anchor}"><div class="title-node">${tuckunders}${titleSpan}</div></li>`;
+    toc.children &&
+      toc.children.forEach((item) => {
+        tocHtml = getTocHtml(item, minLevel, tocHtml, anchors);
+      });
+    return tocHtml;
+  }
+
+  /**获取锚点字符串 */
+  function getAnchorStr(title: string) {
+    const spaceCode = "-";
+    return title.replace(/\s/g, spaceCode).toLowerCase();
+  }
 }
 
 /**
