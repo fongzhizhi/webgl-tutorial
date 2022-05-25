@@ -135,9 +135,16 @@ export function tocPanelEventInit() {
       }
       $$(`.toc li.${activeCls}`)?.classList.remove(activeCls);
       if (lastView >= -1) {
-        $$(`.toc li[target="${anchors[lastView]}"]`, parent)?.classList.add(
-          activeCls
-        );
+        const liEle = $$(`.toc li[target="${anchors[lastView]}"]`, parent);
+        if (!liEle) {
+          return;
+        }
+        liEle.classList.add(activeCls);
+        liEle.scrollIntoView({
+          behavior: "smooth",
+          inline: "start",
+        });
+        liEle.parentElement.scrollLeft = 0;
       }
     })
   );
