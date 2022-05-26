@@ -1,7 +1,14 @@
-@toc-panel-width: 152px;
+@toc-panel-width: 150px;
+@toc-panel-padding: 7px;
+@toc-panel-tuckunder: 16px;
+@toc-panel-real-width: @toc-panel-width + @toc-panel-padding * 2;
+@doc-panel-side-margin: 10px;
+@docs-panel-width: calc(
+  100% - @toc-panel-real-width - @doc-panel-side-margin * 2
+);
 
 #app {
-  width: calc(100% - 100px);
+  width: 100%;
   text-align: center;
   .hidden {
     display: none;
@@ -19,29 +26,35 @@
   }
 
   #docs {
+    width: @docs-panel-width;
+    max-width: 100%;
     text-align: left;
-    margin: 0 auto;
-    padding: 0 20px;
+    margin: 0 @doc-panel-side-margin;
     border: solid #a2a4b1 1px;
     background: #fff;
   }
 
   #canvas {
-    margin-right: 200px;
-    #glcanvas {
-      margin-top: 30px;
-    }
-    .info {
-      padding-bottom: 15px;
+    width: @docs-panel-width;
+    max-width: 100%;
+    margin: 0 10px;
+    margin-top: 30px;
+    border: solid #a2a4b1 1px;
+    display: flex;
+    .canvas-panel {
+      flex: 1;
+      #glcanvas {
+      }
+      .info {
+        padding-bottom: 15px;
+      }
     }
     .examples {
-      position: relative;
-      width: 250px;
+      margin-left: 20px;
       border: solid 1px #5f83b1;
       border-left-width: thick;
-      top: -480px;
-      left: calc(50% + 415px);
       text-align: left;
+      flex-basis: 300px;
       ul {
         max-height: 300px;
         overflow: auto;
@@ -59,7 +72,7 @@
   }
 
   .toc {
-    width: @toc-panel-width + 16;
+    width: @toc-panel-real-width;
     position: fixed;
     top: 140px;
     right: 5px;
@@ -83,7 +96,7 @@
         overflow: hidden;
         min-height: 22px;
         border-left: solid 4px #cdcdcd;
-        padding: 7px;
+        padding: @toc-panel-padding;
         margin: 0;
         & > .title-node {
           display: flex;
@@ -93,7 +106,7 @@
           width: 100%;
           & > .tuckunder {
             flex-shrink: 0;
-            width: 16px;
+            width: @toc-panel-tuckunder;
             vertical-align: middle;
           }
           & > .title {

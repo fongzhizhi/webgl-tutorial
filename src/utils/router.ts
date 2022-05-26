@@ -3,6 +3,7 @@ import { marked } from "marked";
 import { eventInit } from "../app/event";
 import { RouterMap } from "../app/router";
 import { printStyleLog } from "./util";
+import { $$ } from "./xml";
 
 /**
  * 加载文档
@@ -17,6 +18,9 @@ export async function loadDocs(path?: RouterMap) {
         const docsHtml = marked(res.data, {});
         document.getElementById("docs").innerHTML = docsHtml;
         eventInit();
+        if (location.hash) {
+          loadDocByUrl();
+        }
       }
     })
     .catch((err) => {
@@ -24,13 +28,20 @@ export async function loadDocs(path?: RouterMap) {
     });
 }
 
-let oldUrl = "";
+let oldUrl: string = null;
 /**
  * 根据当前url加载文档
  */
 export async function loadDocByUrl() {
   const url = location.pathname.replace("/", "");
   if (oldUrl === url) {
+    if (location.hash) {
+      const anchor = $$(decodeURIComponent(location.hash));
+      anchor &&
+        anchor.scrollIntoView({
+          behavior: "smooth",
+        });
+    }
     return;
   }
   oldUrl = url;

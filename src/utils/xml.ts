@@ -81,17 +81,25 @@ export function getHeadings(
 }
 
 /**
+ * clientHeight
+ * @description 兼容所有浏览器写法
+ */
+export function getClientHeight() {
+  return (
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    document.body.clientHeight
+  );
+}
+
+/**
  * 判断元素是否处于视野内
  * @param el 元素
  */
 export function isInViewPort(el: HTMLElement) {
-  // viewPortHeight 兼容所有浏览器写法
-  const viewPortHeight =
-    window.innerHeight ||
-    document.documentElement.clientHeight ||
-    document.body.clientHeight;
+  const clientHeight = getClientHeight();
   const top = getElementViewTop(el);
-  return top <= viewPortHeight && top > 0;
+  return top <= clientHeight && top > 0;
 }
 
 /**
@@ -105,4 +113,13 @@ export function getElementViewTop(el: HTMLElement) {
   const scrollTop = document.documentElement.scrollTop;
   const viewTop = el.offsetTop - scrollTop;
   return viewTop;
+}
+
+/**
+ * 滚动条是否滚动到底部
+ */
+export function isScroll2Bottom() {
+  const scrollTop = document.documentElement.scrollTop;
+  const clientHeight = getClientHeight();
+  return document.documentElement.scrollHeight - (scrollTop + clientHeight) < 2;
 }

@@ -1,6 +1,13 @@
 import { loadDocByUrl } from "../utils/router";
 import { debounce } from "../utils/util";
-import { $$, $$$, getHeadings, getElementViewTop, TocMap } from "../utils/xml";
+import {
+  $$,
+  $$$,
+  getHeadings,
+  getElementViewTop,
+  TocMap,
+  isScroll2Bottom,
+} from "../utils/xml";
 import { getExampleCall } from "./exampleMap";
 import { DrawAnimationFrame } from "./public";
 
@@ -123,15 +130,20 @@ export function tocPanelEventInit() {
       const activeCls = "active";
       let lastView = -1;
       let i = 0;
-      for (const a of anchors) {
-        const viewTop = getElementViewTop($$("#" + a) as HTMLElement);
-        if (viewTop <= 1) {
-          // 已经滚过视野
-          lastView = i;
-        } else {
-          break;
+      const isBot = isScroll2Bottom();
+      if (!isBot) {
+        for (const a of anchors) {
+          const viewTop = getElementViewTop($$("#" + a) as HTMLElement);
+          if (viewTop <= 1) {
+            // 已经滚过视野
+            lastView = i;
+          } else {
+            break;
+          }
+          i++;
         }
-        i++;
+      } else {
+        lastView = anchors.length - 1;
       }
       $$(`.toc li.${activeCls}`)?.classList.remove(activeCls);
       if (lastView >= -1) {
@@ -140,11 +152,11 @@ export function tocPanelEventInit() {
           return;
         }
         liEle.classList.add(activeCls);
-        liEle.scrollIntoView({
-          behavior: "smooth",
-          inline: "start",
-        });
-        liEle.parentElement.scrollLeft = 0;
+        // liEle.scrollIntoView({
+        //   behavior: "smooth",
+        //   inline: "start",
+        // });
+        // liEle.parentElement.scrollLeft = 0;
       }
     })
   );
