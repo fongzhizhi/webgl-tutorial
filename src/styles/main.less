@@ -25,12 +25,16 @@
     color: #117785;
   }
 
+  .logo-panel {
+    width: @docs-panel-width;
+  }
+
   #docs {
     width: @docs-panel-width;
     max-width: 100%;
     text-align: left;
     margin: 0 @doc-panel-side-margin;
-    border: solid #a2a4b1 1px;
+    padding: 25px;
     background: #fff;
   }
 
@@ -38,13 +42,11 @@
     width: @docs-panel-width;
     max-width: 100%;
     margin: 0 10px;
-    margin-top: 30px;
-    border: solid #a2a4b1 1px;
     display: flex;
+    align-items: center;
     .canvas-panel {
       flex: 1;
-      #glcanvas {
-      }
+      margin-left: 45px;
       .info {
         padding-bottom: 15px;
       }
@@ -55,6 +57,8 @@
       border-left-width: thick;
       text-align: left;
       flex-basis: 300px;
+      height: 300px;
+      overflow: auto;
       ul {
         max-height: 300px;
         overflow: auto;
@@ -85,6 +89,11 @@
       z-index: 100;
       display: inline-table;
       list-style-type: none;
+      & > li:hover {
+        border-left-color: #ece2ff;
+        background-color: #e7e6e8;
+        font-weight: bold;
+      }
       & > li.active {
         border-left-color: #872bff;
         background-color: #ece2ff;

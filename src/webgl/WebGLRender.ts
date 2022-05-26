@@ -43,6 +43,7 @@ export class WebGLRender {
       premultipliedAlpha: false,
     };
     this.gl = canvas.getContext("webgl", gl_attributes);
+    this.gl.viewport(0, 0, canvas.width, canvas.height); // 让视窗可以跟随画布变化自动变化
   }
 
   /**

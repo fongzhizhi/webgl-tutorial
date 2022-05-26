@@ -104,7 +104,7 @@ export function historyEventInit() {
  */
 export function tocPanelEventInit() {
   // 获取标题目录
-  const tocMap = getHeadings($$("#docs"), 2, 3);
+  const tocMap = getHeadings($$("#docs"), 2, 2);
   if (!tocMap) {
     return;
   }
@@ -123,7 +123,7 @@ export function tocPanelEventInit() {
   const tocFragment = document.createRange().createContextualFragment(tocHtml);
   const parent = $$("#app");
   parent.appendChild(tocFragment);
-  // 滚动面板
+  // 监听文档滚动
   document.addEventListener(
     "scroll",
     debounce((e) => {
@@ -152,14 +152,20 @@ export function tocPanelEventInit() {
           return;
         }
         liEle.classList.add(activeCls);
-        // liEle.scrollIntoView({
-        //   behavior: "smooth",
-        //   inline: "start",
-        // });
-        // liEle.parentElement.scrollLeft = 0;
+        liEle.scrollIntoView({
+          behavior: "smooth",
+          inline: "start",
+        });
+        $$(".toc").scrollLeft = 0;
       }
     })
   );
+  // 位置自适应
+  window.addEventListener(
+    "resize",
+    debounce((e) => autoTocPanelPistion())
+  );
+  autoTocPanelPistion();
 
   /**获取目录html */
   function getTocHtml(
@@ -191,6 +197,35 @@ export function tocPanelEventInit() {
     const spaceCode = "-";
     return title.replace(/\s/g, spaceCode).toLowerCase();
   }
+
+  /**自动调整面板的位置：居中显示 */
+  function autoTocPanelPistion() {
+    const tocPanel = $$(".toc") as HTMLElement;
+    const clientHeight = tocPanel.clientHeight;
+    const top = (document.documentElement.clientHeight - clientHeight) / 2;
+    tocPanel.style && (tocPanel.style.top = top + "px");
+  }
+}
+
+export function canvasInit() {
+  window.addEventListener(
+    "resize",
+    debounce((e) => autoCanvasSize())
+  );
+  autoCanvasSize();
+
+  function autoCanvasSize() {
+    const spacing = 25;
+    const examplesPanelWidth = 300;
+    const canvasWidth =
+      $$("#canvas")?.clientWidth - examplesPanelWidth - spacing;
+    const glcanvas = $$("#glcanvas") as HTMLCanvasElement;
+    if (canvasWidth && glcanvas) {
+      glcanvas.width = canvasWidth;
+      const height = canvasWidth * 0.75;
+      glcanvas.height = height;
+    }
+  }
 }
 
 /**
@@ -202,4 +237,5 @@ export function eventInit() {
   exampleBackBtnEventInit();
   pathAnchorEventInit();
   tocPanelEventInit();
+  canvasInit();
 }
