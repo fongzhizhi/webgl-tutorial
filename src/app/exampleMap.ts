@@ -1,4 +1,5 @@
 import { drawBBoxs } from "../examples/advance_1.bboxDrawer";
+import { drawBBoxsByHomogeneous } from "../examples/advance_2.homogeneous";
 import { getWebGLContext } from "../examples/base_1.webglContext";
 import { drawingASquare } from "../examples/base_2.drawingASquare";
 import { drawingASquareOfColor } from "../examples/base_3.drawingASquareOfColor";
@@ -23,6 +24,7 @@ export const ExampleMap: {
   base_7: usingLighting,
   base_8: usingVedioTextureOnCube,
   advance_1: drawBBoxs,
+  advance_2: drawBBoxsByHomogeneous,
 };
 
 /**

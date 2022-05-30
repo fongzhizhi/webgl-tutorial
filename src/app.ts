@@ -13,7 +13,7 @@ window.onload = async () => {
   init();
   await loadDocByUrl();
   canvasDraw();
-  showExample("");
+  showExample("advance_1");
 };
 
 /**展示示例 */

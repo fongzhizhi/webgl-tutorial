@@ -14,10 +14,10 @@ const u_color = "u_color";
 
 /**顶点着色器源码 */
 const vs = `
-    attribute vec3 ${a_position};
+    attribute vec4 ${a_position};
 
     void main() {
-      gl_Position = vec4(${a_position}, 1);
+      gl_Position = ${a_position};
     }
 `;
 /**片段着色器源码 */
@@ -45,6 +45,8 @@ export interface BBoxInfo {
   right: number;
   /**深度(z) */
   depth: number;
+  /**第四位向量分量值 */
+  w?: number;
   /**rgb色值 */
   color: RGBColor;
 }
@@ -83,7 +85,7 @@ export class BBoxDrawer {
     };
     const attrOpt: VertexAttrOption = {
       index: this.render.getAttribLocation(program, a_position),
-      size: 3,
+      size: 4,
       type: WebGLVertexDataType.FLOAT,
       normalized: false,
       stride: 0,
@@ -123,12 +125,12 @@ export class BBoxDrawer {
     // 1.创建着色器程序
     const program = this.creatProgram();
     // 2.绑定缓冲数据
-    const { left, bottom, right, top, depth, color } = bboxInfo;
-    const points = [].concat(
-      [left, bottom, depth],
-      [right, bottom, depth],
-      [left, top, depth],
-      [right, top, depth]
+    const { left, bottom, right, top, depth, w = 1, color } = bboxInfo;
+    const points: number[] = [].concat(
+      [left, bottom, depth, w],
+      [right, bottom, depth, w],
+      [left, top, depth, w],
+      [right, top, depth, w]
     );
     this.loadBuffer(program, points);
     // 3.更新uniform属性

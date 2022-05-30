@@ -104,7 +104,7 @@ export function historyEventInit() {
  */
 export function tocPanelEventInit() {
   // 获取标题目录
-  const tocMap = getHeadings($$("#docs"), 2, 2);
+  const tocMap = getHeadings($$("#docs"), 2, 3);
   if (!tocMap) {
     return;
   }

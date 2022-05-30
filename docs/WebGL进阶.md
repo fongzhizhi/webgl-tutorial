@@ -226,6 +226,95 @@ export function drawBBoxs() {
 
 ### 齐次坐标
 
+在上面的案例中，顶点着色器内置变量`gl_Postion`使用的是`vec4`即四维向量类型，为何我们要使用四维坐标来表示三维呢？
+
+显而易见的问题是，我们使用了四维向量`(x, y, z, w)`来表示三维空间坐标`(x, y, z)`，而这种用高维坐标表示低维坐标的坐标系就称之为**齐次坐标（homogeneous coordinate）**。在上述示例中，我们将第四位`w`固定为`1`。
+
+“为什么要增加维度？”。事实证明，这种增加允许使用许多不错的技术来处理 3D 数据。这个增加的维度将透视的概念引入坐标系中。将其放置在适当的位置后，我们可以将 3D 坐标映射到 2D 空间中，**从而允许两条平行线当它们延伸到远方时相交**。 `w` 的值被用作该坐标的其他分量放除数，因此 `x`, `y` 和 `z` 的真实值被计算为 `x/w` , `y/w` 和 `z/w`（然后 `w` 也即 `w/w` , 变成 1）。
+
+那么齐次坐标和三维迪卡尔坐标的相互转换函数就是：
+
+```ts
+/**
+ * 3维坐标转齐次坐标
+ * @param v 三维向量
+ */
+export function cartesianToHomogeneous(v: vec3, w = 1): vec4 {
+  return [v[0], v[1], v[2], w];
+}
+
+/**
+ * 齐次坐标转三维坐标
+ * @param v 四维向量
+ */
+export function homogeneousToCartesian(v: vec4): vec3 {
+  const w = v[3];
+  return [v[0] / w, v[1] / w, v[2] / w];
+}
+```
+
+正如前面提到的和上面展示的函数，w 分量将和 x, y 和 z 相除。当 w 分量为非零实数时，齐次坐标很容易转换回笛卡尔空间中，现在，如果 w 分量为零会发生什么？
+
+```ts
+homogeneousToCartesian([10, 4, 5, 0]);
+```
+
+计算结果为： `[Infinity, Infinity, Infinity]`。
+
+该齐次坐标表示无穷大的某个点。这是一种方便的方式表示从原点向特定方向发射的射线。除了射线，还可以将其视为方向矢量的表示。如果将此齐次坐标和带有平移的矩阵相乘，则该平移将被有效地消去了。
+
+使用齐次坐标的最终好处是，它们非常适合与 4x4 矩阵相乘。一个顶点必须至少与矩阵的一个维数（行/列）匹配，才能与其相乘。4x4 矩阵可用于编码各种转换。实际上，典型的透视矩阵使用 w 分量除法来实现其变换。
+
+在将齐次坐标转换回笛卡尔坐标之后（通过除以 w），会发生从裁剪空间中裁剪点和多边形的情况。该最终空间称为**归一化设备坐标**或 NDC。
+
+现在，我们来修改之前示例中的代码，运行更改`w`分量的值。
+
+首先修改着色器源码，直接接收四维向量：
+
+```glsl
+attribute vec4 position;
+
+void main() {
+  gl_Position = position;
+}
+```
+
+然后修改缓冲更新：
+
+```ts
+const points: number[] = [].concat(
+  [left, bottom, depth, w],
+  [right, bottom, depth, w],
+  [left, top, depth, w],
+  [right, top, depth, w]
+);
+// ...
+const attrOpt: VertexAttrOption = {
+  index: this.render.getAttribLocation(program, a_position),
+  size: 4,
+  type: WebGLVertexDataType.FLOAT,
+  normalized: false,
+  stride: 0,
+  offset: 0,
+};
+```
+
+现在，我们就可以传入`w`以动态更新`(x, y, z)`的值了。
+
+<span class="example" key="advance_2">示例 2：齐次坐标的应用：通过 w 分量值更新坐标值</span>，比如红色框的`w`为`1.5`就相当于三维空间坐标都缩小了`1.5`倍：
+
+```ts
+drawer.draw({
+  top: 0.5,
+  bottom: -0.5,
+  left: -0.5,
+  right: 0.5,
+  depth: 0,
+  w: 1.5,
+  color: [1, 0.4, 0.4, 1], // red
+});
+```
+
 ### 模型转换
 
 ### 除以 w
@@ -253,4 +342,4 @@ export function drawBBoxs() {
 
   想象一下，照相就是把现实世界的三维转换为二维视图，绘制 3D 就是用二维视图表示 3 维坐标而已，齐次坐标的提出，让维度坐标转换成为可能。
 
-- [ ]
+- https://zhuanlan.zhihu.com/p/258437902 什么是齐次坐标?

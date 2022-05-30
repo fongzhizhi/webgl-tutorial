@@ -83,6 +83,11 @@
     max-height: 400px;
     overflow-x: hidden;
     overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none; /* Chrome Safari */
+    }
+    scrollbar-width: none; /*firefox */
+    -ms-overflow-style: none; /*IE 10+ */
     ul {
       padding: 0;
       position: relative;
