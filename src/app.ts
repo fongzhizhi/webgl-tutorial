@@ -6,14 +6,15 @@ import { marked } from "marked";
 import hljs from "highlight.js";
 import { $$ } from "./utils/xml";
 import { ExampleMap } from "./app/exampleMap";
-import { historyEventInit, tocPanelEventInit } from "./app/event";
+import { historyEventInit } from "./app/event";
 import { loadDocByUrl } from "./utils/router";
 
 window.onload = async () => {
   init();
   await loadDocByUrl();
   canvasDraw();
-  showExample("advance_1");
+  const examples = Object.keys(ExampleMap);
+  showExample(examples && examples[examples.length - 1]);
 };
 
 /**展示示例 */

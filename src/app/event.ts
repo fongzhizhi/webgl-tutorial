@@ -34,7 +34,7 @@ export function exampleEventInit() {
   $$("#canvas .examples").classList.remove("hidden");
   listPanel.innerHTML = listHtml;
   $$$("li", listPanel).forEach((el) => {
-    el.addEventListener("click", clickEvent);
+    el.addEventListener("click", debounce(clickEvent));
   });
 
   /**点击事件 */
@@ -48,6 +48,9 @@ export function exampleEventInit() {
       $$("#canvas").scrollIntoView({
         behavior: "smooth",
       });
+      const activeCls = "active";
+      $$(`#example-list .${activeCls}`)?.classList.remove(activeCls);
+      $$(`#example-list li[key="${key}"]`).classList.add(activeCls);
       cancelAnimationFrame(DrawAnimationFrame.index); // 清除之前使用过的动画绘制
       setTimeout(() => {
         fun.call(this);
