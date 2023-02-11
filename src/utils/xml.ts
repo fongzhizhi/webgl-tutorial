@@ -2,7 +2,11 @@
  * 查询与选择器匹配的第一个元素
  */
 export function $$(selector: string, scope?: Element) {
-  return (scope || document).querySelector(selector);
+  try {
+    return (scope || document).querySelector(selector);
+  } catch (error) {
+    return null;
+  }
 }
 
 /**

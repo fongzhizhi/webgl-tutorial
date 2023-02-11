@@ -126,7 +126,7 @@ export class BBoxDrawer {
     const program = this.creatProgram();
     // 2.绑定缓冲数据
     const { left, bottom, right, top, depth, w = 1, color } = bboxInfo;
-    const points: number[] = [].concat(
+    const points: number[] = ([] as any).concat(
       [left, bottom, depth, w],
       [right, bottom, depth, w],
       [left, top, depth, w],

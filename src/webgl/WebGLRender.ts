@@ -154,18 +154,18 @@ export class WebGLRender {
   /**
    * 创建顶点属性缓冲
    */
-  createArrayBuffer(bufferOpt: BufferOption, attrOpt?: VertexAttrOption) {
+  createArrayBuffer(bufferOpt: BufferOption, attrOpts?: VertexAttrOption[]) {
     bufferOpt = Object.assign(
       {
         usage: WebGLBufferUsage.STATIC_DRAW,
       },
       bufferOpt
     );
-    const gl = this.gl;
     // 创建缓冲
     const buffer = this.createBuffer(bufferOpt, WebGLBufferType.ARRAY_BUFFER);
     // 与属性建立关联
-    attrOpt && this.vertexAttribPointer(attrOpt);
+    attrOpts &&
+      attrOpts.forEach((attrOpt) => this.vertexAttribPointer(attrOpt));
     return buffer;
   }
 
@@ -176,7 +176,7 @@ export class WebGLRender {
     const gl = this.gl;
     // 读取数据
     gl.vertexAttribPointer(
-      attrOpt.index,
+      attrOpt.index as number,
       attrOpt.size,
       gl[attrOpt.type],
       attrOpt.normalized,
@@ -184,7 +184,7 @@ export class WebGLRender {
       attrOpt.offset
     );
     // 建立关联
-    gl.enableVertexAttribArray(attrOpt.index);
+    gl.enableVertexAttribArray(attrOpt.index as number);
   }
 
   /**

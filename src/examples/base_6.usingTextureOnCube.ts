@@ -6,7 +6,8 @@ import {
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { initCanvas } from "../webgl/Utils";
+import { loadUniform } from "./base_2.drawingASquare";
 import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
 import {
   draw,
@@ -135,14 +136,16 @@ export function loadTextureBuffer(
       data: new Float32Array(textureCoordinates),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    {
-      index: render.getAttribLocation(program, "aTextureCoord"),
-      size: 2,
-      type: WebGLVertexDataType.FLOAT,
-      normalized: false,
-      stride: 0,
-      offset: 0,
-    }
+    [
+      {
+        index: render.getAttribLocation(program, "aTextureCoord"),
+        size: 2,
+        type: WebGLVertexDataType.FLOAT,
+        normalized: false,
+        stride: 0,
+        offset: 0,
+      },
+    ]
   );
   return cubeTexTure;
 }

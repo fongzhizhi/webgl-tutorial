@@ -9,7 +9,8 @@ import {
   WebGLVertexDataType,
 } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { initCanvas } from "../webgl/Utils";
+import { loadUniform } from "./base_2.drawingASquare";
 import { createProgram } from "./base_3.drawingASquareOfColor";
 import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
 
@@ -45,7 +46,7 @@ export function drawingACube(radian: number) {
  * @param render 渲染器
  * @param program 着色器程序
  */
-export function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
+function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
   // 顶点坐标
   loadPositionBuffer(render, program);
   // 顶点颜色
@@ -148,7 +149,7 @@ export function loadPositionBuffer(render: WebGLRender, program: WebGLProgram) {
       data: new Float32Array(vertexs),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    vertexAttrOpt
+    [vertexAttrOpt]
   );
 }
 
@@ -182,7 +183,7 @@ function loadColorBuffer(render: WebGLRender, program: WebGLProgram) {
       data: new Float32Array(vertexColors),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    colorAttrOpt
+    [colorAttrOpt]
   );
 }
 

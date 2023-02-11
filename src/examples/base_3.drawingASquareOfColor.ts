@@ -4,8 +4,9 @@ import {
   WebGLBufferUsage,
   WebGLVertexDataType,
 } from "../webgl/Constants";
+import { initCanvas } from "../webgl/Utils";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, draw, loadUniform } from "./base_2.drawingASquare";
+import { draw, loadUniform } from "./base_2.drawingASquare";
 
 /**
  * 绘制一个带颜色的正方形
@@ -90,7 +91,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
       data: new Float32Array(vertexs),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    vertexAttrOpt
+    [vertexAttrOpt]
   );
 
   // 设置颜色(RGB)缓冲
@@ -125,6 +126,6 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
       data: new Float32Array(colors),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    colorAttrOpt
+    [colorAttrOpt]
   );
 }

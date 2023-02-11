@@ -8,6 +8,7 @@ import { drawingAAnimationCube } from "../examples/base_5.drawingACube";
 import { usingTextureOnCube } from "../examples/base_6.usingTextureOnCube";
 import { usingLighting } from "../examples/base_7.usingLighting";
 import { usingVedioTextureOnCube } from "../examples/base_8.usingVedioTextureOnCube";
+import { drawAFullCircleByTriangle } from "../examples/sample_1.drawAFullCircleByTriangle";
 
 /**
  * 示例函数映射表
@@ -15,6 +16,7 @@ import { usingVedioTextureOnCube } from "../examples/base_8.usingVedioTextureOnC
 export const ExampleMap: {
   [key: string]: () => void;
 } = {
+  // base
   base_1: getWebGLContext,
   base_2: drawingASquare,
   base_3: drawingASquareOfColor,
@@ -23,8 +25,11 @@ export const ExampleMap: {
   base_6: usingTextureOnCube,
   base_7: usingLighting,
   base_8: usingVedioTextureOnCube,
+  // advance
   advance_1: drawBBoxs,
   advance_2: drawBBoxsByHomogeneous,
+  // sample
+  sample_1: drawAFullCircleByTriangle,
 };
 
 /**

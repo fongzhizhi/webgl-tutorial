@@ -2,7 +2,8 @@ import { mat4 } from "gl-matrix";
 import { $$ } from "../utils/xml";
 import { WebGLBufferUsage, WebGLVertexDataType } from "../webgl/Constants";
 import { WebGLRender } from "../webgl/WebGLRender";
-import { initCanvas, loadUniform } from "./base_2.drawingASquare";
+import { initCanvas } from "../webgl/Utils";
+import { loadUniform } from "./base_2.drawingASquare";
 import { requestAnimationFrameDraw } from "./base_4.drawingAAnimatingSquare";
 import { draw } from "./base_5.drawingACube";
 import {
@@ -114,14 +115,16 @@ function loadVertexBuffer_aVertexNormal(
       data: new Float32Array(vertextNormals),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    {
-      index: render.getAttribLocation(program, "aVertexNormal"),
-      size: 3,
-      type: WebGLVertexDataType.FLOAT,
-      normalized: false,
-      stride: 0,
-      offset: 0,
-    }
+    [
+      {
+        index: render.getAttribLocation(program, "aVertexNormal"),
+        size: 3,
+        type: WebGLVertexDataType.FLOAT,
+        normalized: false,
+        stride: 0,
+        offset: 0,
+      },
+    ]
   );
 }
 

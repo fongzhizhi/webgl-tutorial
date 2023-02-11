@@ -1,6 +1,6 @@
 import { $$ } from "../utils/xml";
 import { BBoxDrawer } from "../webgl/components/BBoxDrawer";
-import { initCanvas } from "./base_2.drawingASquare";
+import { initCanvas } from "../webgl/Utils";
 
 /**
  * 通过齐次坐标绘制矩形框

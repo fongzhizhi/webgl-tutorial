@@ -6,6 +6,7 @@ import {
   WebGLDrawType,
   WebGLVertexDataType,
 } from "../webgl/Constants";
+import { initCanvas } from "../webgl/Utils";
 import { WebGLRender } from "../webgl/WebGLRender";
 
 /**
@@ -19,21 +20,15 @@ export function drawingASquare() {
   initCanvas(gl);
   // 创建着色器程序
   const program = createProgram(render);
+  if (!program) {
+    return;
+  }
   // 创建顶点缓冲并关联顶点属性
   loadVertexBuffer(render, program);
   // 开启渲染状态，传递 uniform 变量值
   loadUniform(render, program);
   // 绘制
   draw(gl);
-}
-
-/**初始化画布状态 */
-export function initCanvas(gl: WebGLRenderingContext) {
-  gl.clearColor(0.3, 0.3, 0.3, 1); // 使用完全不透明的灰色清除所有图像
-  gl.clearDepth(1); // 清空所有图元
-  gl.enable(gl.DEPTH_TEST); // 启用深度测试
-  gl.depthFunc(gl.LEQUAL); // 指定深度比较函数
-  gl.clear(gl.COLOR_BUFFER_BIT); // 清空画布
 }
 
 /**
@@ -79,7 +74,7 @@ function loadVertexBuffer(render: WebGLRender, program: WebGLProgram) {
       data: new Float32Array(vertexs),
       usage: WebGLBufferUsage.STATIC_DRAW,
     },
-    vertexAttrOpt
+    [vertexAttrOpt]
   );
 }
 

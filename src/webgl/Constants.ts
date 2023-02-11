@@ -61,17 +61,17 @@ export enum WebGLVertexDataType {
  * 顶点属性参数
  */
 export interface VertexAttrOption {
-  /**顶点属性索引 */
-  index: number;
-  /**顶点属性组成数量 */
+  /**属性索引 */
+  index: number | string;
+  /**属性尺寸 */
   size: WebGLVertexSize;
-  /**顶点数据类型 */
+  /**属性数据类型 */
   type: WebGLVertexDataType;
   /**是否归一化 */
   normalized: boolean;
-  /**以字节为单位指定连续顶点属性开始之间的偏移量(即数组中一行长度)。范围[0, 255] */
+  /**相邻顶点之间的字节数(即数组中一行长度)。范围[0, 255] */
   stride: GLsizei;
-  /**顶点属性数组中第一部分的字节偏移量 */
+  /**顶点属性起始索引字节偏移量 */
   offset: GLintptr;
 }
 
@@ -196,3 +196,47 @@ export type TexParam = Partial<{
   /**纹理坐标垂直填充t */
   wrap_t: TexParameter_Wrap_ST;
 }>;
+
+/**
+ * 渲染程序配置
+ */
+export interface RenderpProgramConfig {
+  /**顶点着色器配置 */
+  vertex: RenderpProgramVertex;
+  /**片元着色器配置 */
+  fragment: RenderpProgramFragment;
+}
+
+/**顶点着色器配置 */
+export interface RenderpProgramVertex {
+  /**源码 */
+  code: string;
+  /**描述信息 */
+  desc: {
+    /**每组顶点缓冲数据长度 */
+    // arrayStride: number;
+    /**属性表 */
+    attributes: VertexAttrOption[];
+  };
+}
+
+/**片元着色器配置 */
+export interface RenderpProgramFragment {
+  /**源码 */
+  code: string;
+}
+
+/**uniform数据描述结构 */
+export interface UniformData {
+  /**定位索引 */
+  location: number | string;
+  /**缓冲值 */
+  data: Iterable<number>;
+  desc: {
+    /**格式 */
+    format: "float" | "int" | "mat";
+    /**单个缓冲值尺寸 */
+    unitSize: WebGLVertexSize;
+    transpose?: boolean;
+  };
+}
