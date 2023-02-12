@@ -1,30 +1,29 @@
-import { WebGLRender } from "../webgl/WebGLRender";
-import basicVS from "./glsl/basicVS.glsl?raw";
-import basicFs from "./glsl/basicFS.glsl?raw";
 import { $$ } from "../utils/xml";
 import {
   RenderpProgramConfig,
-  UniformData,
   WebGLVertexDataType,
+  UniformData,
 } from "../webgl/Constants";
 import {
   getMvpMatrix,
-  getVertexAttrOption,
   initCanvas,
   initProgram,
   loadUniforms,
+  getVertexAttrOption,
   loadVertexBuffer,
 } from "../webgl/Utils";
+import { WebGLRender } from "../webgl/WebGLRender";
+import basicVS from "./glsl/basicVS.glsl?raw";
+import basicFs from "./glsl/basicFS.glsl?raw";
 
-/**
- * 通过三角形模拟绘制实心圆
- */
-export function drawAFullCircleByTriangle() {
+/**绘制线段 */
+export function drawALine() {
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
   // 渲染程序
   const bytesPerElement = 4;
   const arrayStride = 6;
   const stride = arrayStride * bytesPerElement;
+  let offset = 0;
   const renderConfig: RenderpProgramConfig = {
     vertex: {
       code: basicVS,
@@ -36,7 +35,7 @@ export function drawAFullCircleByTriangle() {
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
-            offset: 0,
+            offset,
           },
           {
             index: "a_Color",
@@ -44,7 +43,7 @@ export function drawAFullCircleByTriangle() {
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
-            offset: 3 * bytesPerElement,
+            offset: (offset += 3 * bytesPerElement),
           },
         ],
       },
@@ -107,8 +106,6 @@ function getVertexs() {
   }
 }
 
-/**执行绘制 */
-function draw(render: WebGLRender, count: number) {
-  const gl = render.gl;
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, count);
+function draw(render: WebGLRender, n: number) {
+  render.gl.drawArrays(render.gl.LINE_STRIP, 0, n);
 }

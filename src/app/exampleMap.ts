@@ -9,6 +9,9 @@ import { usingTextureOnCube } from "../examples/base_6.usingTextureOnCube";
 import { usingLighting } from "../examples/base_7.usingLighting";
 import { usingVedioTextureOnCube } from "../examples/base_8.usingVedioTextureOnCube";
 import { drawAFullCircleByTriangle } from "../examples/sample_1.drawAFullCircleByTriangle";
+import { drawAFullCircle } from "../examples/sample_2.drawAFullCircle";
+import { drawAFullCircle2 } from "../examples/sample_3.drawAFullCircle2";
+import { drawALine } from "../examples/sample_4.drawALine";
 
 /**
  * 示例函数映射表
@@ -30,6 +33,9 @@ export const ExampleMap: {
   advance_2: drawBBoxsByHomogeneous,
   // sample
   sample_1: drawAFullCircleByTriangle,
+  sample_2: drawAFullCircle,
+  sample_3: drawAFullCircle2,
+  sample_4: drawALine,
 };
 
 /**

@@ -1,60 +1,66 @@
-import { WebGLRender } from "../webgl/WebGLRender";
-import basicVS from "./glsl/basicVS.glsl?raw";
-import basicFs from "./glsl/basicFS.glsl?raw";
 import { $$ } from "../utils/xml";
 import {
   RenderpProgramConfig,
   UniformData,
   WebGLVertexDataType,
 } from "../webgl/Constants";
+import { WebGLRender } from "../webgl/WebGLRender";
+import circleVS from "./glsl/circleVS_02.glsl?raw";
+import circleFS from "./glsl/circleFS_02.glsl?raw";
 import {
   getMvpMatrix,
-  getVertexAttrOption,
   initCanvas,
   initProgram,
   loadUniforms,
+  getVertexAttrOption,
   loadVertexBuffer,
 } from "../webgl/Utils";
 
-/**
- * 通过三角形模拟绘制实心圆
- */
-export function drawAFullCircleByTriangle() {
+export function drawAFullCircle2() {
   const render = new WebGLRender($$("#glcanvas") as HTMLCanvasElement);
-  // 渲染程序
+  // 数据与相关配置
   const bytesPerElement = 4;
-  const arrayStride = 6;
+  const arrayStride = 4; // [index, position * 2, radius]
   const stride = arrayStride * bytesPerElement;
+  let offset = 0;
   const renderConfig: RenderpProgramConfig = {
     vertex: {
-      code: basicVS,
+      code: circleVS,
       desc: {
         attributes: [
           {
-            index: "a_Position",
-            size: 3,
+            index: "a_Index",
+            size: 1,
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
-            offset: 0,
+            offset: offset,
           },
           {
-            index: "a_Color",
-            size: 3,
+            index: "a_Center",
+            size: 2,
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
-            offset: 3 * bytesPerElement,
+            offset: (offset += 1 * bytesPerElement),
+          },
+          {
+            index: "a_Radius",
+            size: 1,
+            type: WebGLVertexDataType.FLOAT,
+            normalized: false,
+            stride,
+            offset: (offset += 2 * bytesPerElement),
           },
         ],
       },
     },
     fragment: {
-      code: basicFs,
+      code: circleFS,
     },
   };
   // 渲染数据
-  const vertexData = getVertexs();
+  const vertexData = [0, 0, 0, 1, 1, 0, 0, 1, 2, 0, 0, 1];
 
   const uniformDatas: UniformData[] = [
     {
@@ -83,32 +89,8 @@ export function drawAFullCircleByTriangle() {
   draw(render, vertexData.length / arrayStride);
 }
 
-/**获取顶点数据 */
-function getVertexs() {
-  const center = [0, 0]; // 圆心
-  const radius = 1; // 半径
-  const whole = 2 * Math.PI;
-  const step = whole / 50;
-  // [positin * 3, color * 3]
-  const vertexData: number[] = [];
-  // pushPoint(vertexData, center[0], center[1]);
-  for (let a = 0; a < whole + step; a += step) {
-    const x = center[0] + radius * Math.cos(a);
-    const y = center[1] + radius * Math.sin(a);
-    pushPoint(vertexData, x, y);
-  }
-  return vertexData;
-
-  function pushPoint(vertexData: number[], x: number, y: number) {
-    const r = Math.abs(x);
-    const g = Math.abs(y);
-    const b = Math.abs(x + y);
-    vertexData.push(x, y, 1, r, g, b);
-  }
-}
-
 /**执行绘制 */
 function draw(render: WebGLRender, count: number) {
   const gl = render.gl;
-  gl.drawArrays(gl.TRIANGLE_FAN, 0, count);
+  gl.drawArrays(gl.TRIANGLES, 0, count);
 }

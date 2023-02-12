@@ -146,7 +146,8 @@ export function getMvpMatrix(
   // 投影
   const projectionMatrix = mat4.create();
   const fieldOfView = (45 * Math.PI) / 180;
-  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  const canvas = gl.canvas as HTMLCanvasElement;
+  const aspect = canvas.clientWidth / canvas.clientHeight;
   const zNear = 0.1;
   const zFar = 100.0;
   mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
@@ -163,6 +164,5 @@ export function getMvpMatrix(
     !isNaN(radian.z) &&
       mat4.rotate(modelViewMatrix, modelViewMatrix, radian.z, [0, 0, 1]); // 绕 z 轴旋转
   }
-
   return mat4.multiply(projectionMatrix, projectionMatrix, modelViewMatrix);
 }
