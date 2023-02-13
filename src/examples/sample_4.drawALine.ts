@@ -84,18 +84,12 @@ export function drawALine() {
 
 /**获取顶点数据 */
 function getVertexs() {
-  const center = [0, 0]; // 圆心
-  const radius = 1; // 半径
-  const whole = 2 * Math.PI;
-  const step = whole / 50;
-  // [positin * 3, color * 3]
+  // [a_start_end<vec4>, a_params<vec3~[index, stroke, radius]>, a_color<vec3>];
   const vertexData: number[] = [];
-  // pushPoint(vertexData, center[0], center[1]);
-  for (let a = 0; a < whole + step; a += step) {
-    const x = center[0] + radius * Math.cos(a);
-    const y = center[1] + radius * Math.sin(a);
-    pushPoint(vertexData, x, y);
-  }
+  pushPoint(vertexData, -1, 0.5);
+  pushPoint(vertexData, -1, -0.5);
+  pushPoint(vertexData, 1, 0.5);
+  pushPoint(vertexData, 1, -0.5);
   return vertexData;
 
   function pushPoint(vertexData: number[], x: number, y: number) {
@@ -107,5 +101,5 @@ function getVertexs() {
 }
 
 function draw(render: WebGLRender, n: number) {
-  render.gl.drawArrays(render.gl.LINE_STRIP, 0, n);
+  render.gl.drawArrays(render.gl.TRIANGLE_STRIP, 0, n);
 }
