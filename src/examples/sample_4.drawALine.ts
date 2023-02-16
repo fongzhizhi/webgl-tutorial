@@ -13,8 +13,8 @@ import {
   loadVertexBuffer,
 } from "../webgl/Utils";
 import { WebGLRender } from "../webgl/WebGLRender";
-import basicVS from "./glsl/basicVS.glsl?raw";
-import basicFs from "./glsl/basicFS.glsl?raw";
+import VS from "./glsl/strokeLineVS.glsl?raw";
+import FS from "./glsl/strokeLineFS.glsl?raw";
 
 /**绘制线段 */
 export function drawALine() {
@@ -26,34 +26,38 @@ export function drawALine() {
   let offset = 0;
   const renderConfig: RenderpProgramConfig = {
     vertex: {
-      code: basicVS,
+      code: VS,
       desc: {
         attributes: [
           {
-            index: "a_Position",
-            size: 3,
+            index: "a_start_end",
+            size: 4,
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
             offset,
           },
           {
-            index: "a_Color",
-            size: 3,
+            index: "a_params",
+            size: 2,
             type: WebGLVertexDataType.FLOAT,
             normalized: false,
             stride,
-            offset: (offset += 3 * bytesPerElement),
+            offset: (offset += 4 * bytesPerElement),
           },
         ],
       },
     },
     fragment: {
-      code: basicFs,
+      code: FS,
     },
   };
   // 渲染数据
-  const vertexData = getVertexs();
+  const vertexData = getVertexs({
+    start: [-0.5, -0.5],
+    end: [0.8, 0.8],
+    stroke: 1,
+  });
 
   const uniformDatas: UniformData[] = [
     {
@@ -83,21 +87,27 @@ export function drawALine() {
 }
 
 /**获取顶点数据 */
-function getVertexs() {
-  // [a_start_end<vec4>, a_params<vec3~[index, stroke, radius]>, a_color<vec3>];
+function getVertexs(opt: {
+  /**起点 */
+  start: [number, number];
+  /**终点 */
+  end: [number, number];
+  /**线宽 */
+  stroke: number;
+}) {
+  // [a_start_end<vec4>, a_params<vec2~[index, stroke]>];
   const vertexData: number[] = [];
-  pushPoint(vertexData, -1, 0.5);
-  pushPoint(vertexData, -1, -0.5);
-  pushPoint(vertexData, 1, 0.5);
-  pushPoint(vertexData, 1, -0.5);
-  return vertexData;
-
-  function pushPoint(vertexData: number[], x: number, y: number) {
-    const r = Math.abs(x);
-    const g = Math.abs(y);
-    const b = Math.abs(x + y);
-    vertexData.push(x, y, 1, r, g, b);
+  for (let i = 0; i < 4; i++) {
+    vertexData.push(
+      opt.start[0],
+      opt.start[1],
+      opt.end[0],
+      opt.end[1],
+      i,
+      opt.stroke
+    );
   }
+  return vertexData;
 }
 
 function draw(render: WebGLRender, n: number) {
