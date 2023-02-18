@@ -108,4 +108,9 @@ void main() {
 
 <span class="example" key="sample_4">绘制线宽线段</span>。
 
-## 绘制线宽圆弧
+## More
+
+- <span class="example" key="sample_5">使用视图矩阵观测三角形</span>。
+- <span class="example" key="sample_6">使用视图矩阵观测旋转的三角形</span>。
+- <span class="example" key="sample_7">使用透视投影观察三角形</span>。
+- <span class="example" key="sample_8">使用`drawElements`绘制立方体</span>。

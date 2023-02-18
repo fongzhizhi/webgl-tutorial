@@ -66,8 +66,9 @@ export function drawAFullCircleByTriangle() {
       },
     },
   ];
-  initCanvas(render.gl);
+
   // 程序初始化
+  initCanvas(render.gl);
   const program = initProgram(render, renderConfig);
   if (!program) {
     return;

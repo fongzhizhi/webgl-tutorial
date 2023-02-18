@@ -154,7 +154,11 @@ export class WebGLRender {
   /**
    * 创建顶点属性缓冲
    */
-  createArrayBuffer(bufferOpt: BufferOption, attrOpts?: VertexAttrOption[]) {
+  createArrayBuffer(
+    bufferOpt: BufferOption,
+    attrOpts?: VertexAttrOption[],
+    bufferType = WebGLBufferType.ARRAY_BUFFER
+  ) {
     bufferOpt = Object.assign(
       {
         usage: WebGLBufferUsage.STATIC_DRAW,
@@ -162,7 +166,7 @@ export class WebGLRender {
       bufferOpt
     );
     // 创建缓冲
-    const buffer = this.createBuffer(bufferOpt, WebGLBufferType.ARRAY_BUFFER);
+    const buffer = this.createBuffer(bufferOpt, bufferType);
     // 与属性建立关联
     attrOpts &&
       attrOpts.forEach((attrOpt) => this.vertexAttribPointer(attrOpt));
