@@ -44,7 +44,7 @@ export function cssObj2CssStr(cssObj: { [k: string]: string }) {
  * @param delay 延迟(ms)
  */
 export function debounce<T>(fn: (...as: T[]) => void, delay = 72) {
-  let timer: NodeJS.Timeout = null;
+  let timer: number = null;
   return function (...args: T[]) {
     if (timer != null) {
       clearTimeout(timer);

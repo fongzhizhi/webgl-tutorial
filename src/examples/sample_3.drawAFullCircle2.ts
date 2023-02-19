@@ -27,6 +27,7 @@ export function drawAFullCircle2() {
     vertex: {
       code: circleVS,
       desc: {
+        arrayStride,
         attributes: [
           {
             index: "a_Index",
@@ -57,6 +58,9 @@ export function drawAFullCircle2() {
     },
     fragment: {
       code: circleFS,
+      desc: {
+        attributes: [],
+      },
     },
   };
   // 渲染数据

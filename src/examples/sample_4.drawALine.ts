@@ -28,6 +28,7 @@ export function drawALine() {
     vertex: {
       code: VS,
       desc: {
+        arrayStride,
         attributes: [
           {
             index: "a_start_end",
@@ -50,6 +51,9 @@ export function drawALine() {
     },
     fragment: {
       code: FS,
+      desc: {
+        attributes: [],
+      },
     },
   };
   // 渲染数据

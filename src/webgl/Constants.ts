@@ -214,7 +214,7 @@ export interface RenderpProgramVertex {
   /**描述信息 */
   desc: {
     /**每组顶点缓冲数据长度 */
-    // arrayStride: number;
+    arrayStride: number;
     /**属性表 */
     attributes: VertexAttrOption[];
   };
@@ -224,6 +224,11 @@ export interface RenderpProgramVertex {
 export interface RenderpProgramFragment {
   /**源码 */
   code: string;
+  /**描述信息 */
+  desc: {
+    /**属性表 */
+    attributes: Omit<UniformData, "data">[];
+  };
 }
 
 /**uniform数据描述结构 */

@@ -4,7 +4,7 @@ import { basicRender, BasicUniformData } from "./utils/basicRender";
 
 /**
  * 使用视图矩阵观测旋转的三角形
- * @source Chapter 4 - *webgl programming guide*
+ * @source Chapter 7 - *webgl programming guide*
  */
 export function lookAtRotatedTrangles() {
   return basicRender({

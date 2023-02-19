@@ -29,6 +29,7 @@ export function drawAFullCircleByTriangle() {
     vertex: {
       code: basicVS,
       desc: {
+        arrayStride,
         attributes: [
           {
             index: "a_Position",
@@ -51,6 +52,9 @@ export function drawAFullCircleByTriangle() {
     },
     fragment: {
       code: basicFs,
+      desc: {
+        attributes: [],
+      },
     },
   };
   // 渲染数据

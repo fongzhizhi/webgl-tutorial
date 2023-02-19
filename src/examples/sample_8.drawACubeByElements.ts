@@ -4,7 +4,7 @@ import { basicRender, BasicUniformData } from "./utils/basicRender";
 
 /**
  * 使用drawElements绘制立方体
- * @source Chapter 4 - *webgl programming guide*
+ * @source Chapter 7 - *webgl programming guide*
  */
 export function drawACubeByElements() {
   return basicRender({
@@ -18,17 +18,40 @@ export function drawACubeByElements() {
 /**获取顶点数据 */
 function getVertexs() {
   return [
-    1, 1, 1, 0, 1, 1, -1, 1, 1, 1, 0, 0, -1, -1, 1, 1, 1, 0, 1, -1, 1, 1, 0, 1,
-    1, -1, -1, 0, 0, 1, 1, 1, -1, 1, 1, 0, -1, 1, -1, 0, 0, 0, -1, -1, -1, 0, 1,
-    0,
+    // v0
+    1, 1, 1, 0, 1, 1,
+    // v1
+    -1, 1, 1, 1, 0, 0,
+    // v2
+    -1, -1, 1, 1, 1, 0,
+    // v3
+    1, -1, 1, 1, 0, 1,
+    // v4
+    1, -1, -1, 0, 0, 1,
+    // v5
+    1, 1, -1, 1, 1, 0,
+    // v6
+    -1, 1, -1, 0, 0, 0,
+    // v7
+    -1, -1, -1, 0, 1, 0,
   ];
 }
 
 /**获取elements索引 */
 function getElementIndexs() {
   return [
-    0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 1, 1, 6, 7, 1, 7, 2, 7,
-    4, 3, 7, 3, 2, 4, 7, 6, 4, 6, 5,
+    // front
+    0, 1, 2, 0, 2, 3,
+    // right
+    0, 3, 4, 0, 4, 5,
+    // top
+    0, 5, 6, 0, 6, 1,
+    // bottom
+    1, 6, 7, 1, 7, 2,
+    // left
+    7, 4, 3, 7, 3, 2,
+    // back
+    4, 7, 6, 4, 6, 5,
   ];
 }
 

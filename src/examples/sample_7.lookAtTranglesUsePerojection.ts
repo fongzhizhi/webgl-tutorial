@@ -4,7 +4,7 @@ import { basicRender, BasicUniformData } from "./utils/basicRender";
 
 /**
  * 使用透视投影观察三角形
- * @source Chapter 4 - *webgl programming guide*
+ * @source Chapter 7 - *webgl programming guide*
  */
 export function lookAtRotatedTranglesUseProjection() {
   return basicRender({

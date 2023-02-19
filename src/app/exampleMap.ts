@@ -16,6 +16,7 @@ import { lookAtTrangles } from "../examples/sample_5.lookAtTrangles";
 import { lookAtRotatedTrangles } from "../examples/sample_6.lookAtRotatedTrangles";
 import { lookAtRotatedTranglesUseProjection } from "../examples/sample_7.lookAtTranglesUsePerojection";
 import { drawACubeByElements } from "../examples/sample_8.drawACubeByElements";
+import { drawALightedCube } from "../examples/sample_9.drawALightedCube";
 
 /**
  * 示例函数映射表
@@ -44,6 +45,7 @@ export const ExampleMap: {
   sample_6: lookAtRotatedTrangles,
   sample_7: lookAtRotatedTranglesUseProjection,
   sample_8: drawACubeByElements,
+  sample_9: drawALightedCube,
 };
 
 /**
